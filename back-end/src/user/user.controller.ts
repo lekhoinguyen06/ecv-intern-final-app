@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Post,
-  Get,
-  Put,
-  Delete,
-  Body,
-  Param,
-} from '@nestjs/common';
+import { Controller, Post, Get, Put, Delete, Body } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { User } from './interfaces/user.interface';
@@ -20,21 +12,21 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  // GET /users/123
-  @Get(':id')
-  findOne(@Param('id') id: string): Promise<User | null> {
-    return this.userService.findOne(id);
+  // GET /users
+  @Get()
+  findOne(@Body() email: string): Promise<User | null> {
+    return this.userService.findOne(email);
   }
 
-  // PUT /users/123
-  @Put(':id')
-  update(@Param('id') id: string, @Body() updateUsersDto: UpdateUserDto) {
-    return `This action updates a #${id} user ${JSON.stringify(updateUsersDto)}`;
+  // PUT /users
+  @Put()
+  update(@Body() email: string, @Body() updateUsersDto: UpdateUserDto) {
+    return `This action updates a #${email} user ${JSON.stringify(updateUsersDto)}`;
   }
 
-  // DELETE /users/123
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return `This action removes a #${id} user`;
+  // DELETE /users
+  @Delete()
+  remove(@Body() email: string) {
+    return `This action removes a #${email} user`;
   }
 }
