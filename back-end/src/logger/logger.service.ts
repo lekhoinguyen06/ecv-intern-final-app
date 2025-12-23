@@ -19,8 +19,8 @@ export class LoggingService {
           submissionRetryCount: 1,
           batchSize: 20,
           awsConfig: {
-          region: 'ap-southeast-1',
-        },
+            region: 'ap-southeast-1',
+          },
           formatLog: (item: unknown) => `Winston log: ${JSON.stringify(item)}`,
         }),
       ],

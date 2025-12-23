@@ -1,5 +1,5 @@
 import { z } from 'zod';
-declare const UserObjectSchema: z.ZodObject<{
+export declare const UserObjectSchema: z.ZodObject<{
     email: z.ZodNonOptional<z.ZodOptional<z.ZodEmail>>;
     name: z.ZodOptional<z.ZodString>;
     age: z.ZodOptional<z.ZodNumber>;
@@ -34,4 +34,3 @@ export declare const UpdateUserSchema: z.ZodObject<{
 }, z.core.$strip>;
 export type CreateUserDto = z.infer<typeof UserObjectSchema>;
 export type UpdateUserDto = z.infer<typeof UserObjectSchema>;
-export {};

@@ -28,19 +28,19 @@ export class UserController {
 
   // GET /users
   @Get()
-  findOne(@Body() email: string): Promise<User | null> {
+  findOne(@Body('email') email: string): Promise<User | null> {
     return this.userService.findOne(email);
   }
 
   // PUT /users
   @Put()
-  update(@Body() email: string, @Body() updateUsersDto: UpdateUserDto) {
-    return `This action updates a #${email} user ${JSON.stringify(updateUsersDto)}`;
+  update(@Body() updateUsersDto: UpdateUserDto) {
+    return `This action updates a #${updateUsersDto.email} user ${JSON.stringify(updateUsersDto)}`;
   }
 
   // DELETE /users
   @Delete()
-  remove(@Body() email: string) {
+  remove(@Body('email') email: string) {
     return `This action removes a #${email} user`;
   }
 }

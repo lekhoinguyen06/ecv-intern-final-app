@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const UserObjectSchema = z
+export const UserObjectSchema = z
   .object({
     email: z.email(),
     name: z.string(),

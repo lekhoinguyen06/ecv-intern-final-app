@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateUserSchema = exports.CreateUserSchema = void 0;
+exports.UpdateUserSchema = exports.CreateUserSchema = exports.UserObjectSchema = void 0;
 const zod_1 = require("zod");
-const UserObjectSchema = zod_1.z
+exports.UserObjectSchema = zod_1.z
     .object({
     email: zod_1.z.email(),
     name: zod_1.z.string(),
@@ -16,6 +16,6 @@ const UserObjectSchema = zod_1.z
 })
     .partial()
     .required({ email: true });
-exports.CreateUserSchema = UserObjectSchema;
-exports.UpdateUserSchema = UserObjectSchema;
+exports.CreateUserSchema = exports.UserObjectSchema;
+exports.UpdateUserSchema = exports.UserObjectSchema;
 //# sourceMappingURL=user.dto.js.map

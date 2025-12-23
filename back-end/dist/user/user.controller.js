@@ -28,8 +28,8 @@ let UserController = class UserController {
     findOne(email) {
         return this.userService.findOne(email);
     }
-    update(email, updateUsersDto) {
-        return `This action updates a #${email} user ${JSON.stringify(updateUsersDto)}`;
+    update(updateUsersDto) {
+        return `This action updates a #${updateUsersDto.email} user ${JSON.stringify(updateUsersDto)}`;
     }
     remove(email) {
         return `This action removes a #${email} user`;
@@ -46,7 +46,7 @@ __decorate([
 ], UserController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Body)('email')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
@@ -54,14 +54,13 @@ __decorate([
 __decorate([
     (0, common_1.Put)(),
     __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], UserController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Body)('email')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
