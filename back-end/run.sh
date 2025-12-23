@@ -1,5 +1,5 @@
 cd ~/ecv-intern-final-app/
 git pull
-cd ./backend
+cd ./back-end
 pnpm install
 pnpm run start:prod
