@@ -29,6 +29,12 @@ exports.AppModule = AppModule = __decorate([
                 database: 'postgres',
                 entities: [user_entity_1.User],
                 synchronize: true,
+                ssl: true,
+                extra: {
+                    ssl: {
+                        rejectUnauthorized: false,
+                    },
+                },
             }),
         ],
         controllers: [app_controller_1.AppController],

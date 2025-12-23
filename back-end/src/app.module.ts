@@ -17,6 +17,12 @@ import { User } from './user/entity/user.entity';
       database: 'postgres',
       entities: [User],
       synchronize: true, // Sync with database (turn off for productions - otherwise you can lose production data)
+      ssl: true,
+      extra: {
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      },
     }),
   ],
   controllers: [AppController],
