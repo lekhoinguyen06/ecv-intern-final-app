@@ -17,7 +17,6 @@ export class User {
   @Column({
     type: 'enum',
     enum: ['Male', 'Femele', 'Other'],
-    default: 'ghost',
   })
   sex: string;
 

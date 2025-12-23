@@ -44,7 +44,6 @@ __decorate([
     (0, typeorm_1.Column)({
         type: 'enum',
         enum: ['Male', 'Femele', 'Other'],
-        default: 'ghost',
     }),
     __metadata("design:type", String)
 ], User.prototype, "sex", void 0);
