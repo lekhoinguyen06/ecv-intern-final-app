@@ -62,6 +62,9 @@ let LoggingService = class LoggingService {
                     submissionInterval: 2000,
                     submissionRetryCount: 1,
                     batchSize: 20,
+                    awsConfig: {
+                        region: 'ap-southeast-1',
+                    },
                     formatLog: (item) => `Winston log: ${JSON.stringify(item)}`,
                 }),
             ],

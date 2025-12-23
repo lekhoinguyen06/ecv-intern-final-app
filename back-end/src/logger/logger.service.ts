@@ -18,12 +18,10 @@ export class LoggingService {
           submissionInterval: 2000,
           submissionRetryCount: 1,
           batchSize: 20,
-          // awsConfig: {
-          //   accessKeyId: '...',
-          //   secretAccessKey: '...',
-          //   region: '...',
-          // },
-          formatLog: (item: any) => `Winston log: ${JSON.stringify(item)}`,
+          awsConfig: {
+          region: 'ap-southeast-1',
+        },
+          formatLog: (item: unknown) => `Winston log: ${JSON.stringify(item)}`,
         }),
       ],
     });
