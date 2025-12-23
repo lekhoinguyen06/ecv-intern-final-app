@@ -1,13 +1,27 @@
-import { Controller, Post, Get, Put, Delete, Body } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Put,
+  Delete,
+  Body,
+  UsePipes,
+} from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
+import {
+  CreateUserSchema,
+  type CreateUserDto,
+  type UpdateUserDto,
+} from './dto/user.dto';
 import { User } from './interfaces/user.interface';
+import { ZodValidationPipe } from 'src/pipe/zod.pipe';
 
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
   // POST /users
   @Post()
+  @UsePipes(new ZodValidationPipe(CreateUserSchema))
   create(@Body() createUserDto: CreateUserDto): void {
     return this.userService.create(createUserDto);
   }

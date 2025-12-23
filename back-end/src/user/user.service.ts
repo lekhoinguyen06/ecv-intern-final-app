@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { User } from './interfaces/user.interface';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -17,13 +21,35 @@ export class UserService {
   private readonly users: User[] = [];
 
   create(user: CreateUserDto) {
-    this.usersRepository.create(user);
-    this.loggingService.info('Created a user');
+    try {
+      const savedUser = this.usersRepository.create(user);
+      this.loggingService.info(`Created user with email: ${savedUser.id}`);
+    } catch (error) {
+      this.loggingService.error('Error when creating a user' + error);
+      throw error;
+    }
   }
 
-  findOne(email: string): Promise<User | null> {
-    this.loggingService.info('Found a user with email' + email);
-    return this.usersRepository.findOneBy({ email });
+  async findOne(email: string): Promise<User | null> {
+    try {
+      const existingUser = await this.usersRepository.findOneBy({ email });
+      this.loggingService.info('Found a user with email' + email);
+      if (existingUser) {
+        return existingUser;
+      } else {
+        throw new BadRequestException(
+          `Error when finding user: user with email ${email} does not exist`,
+        );
+      }
+    } catch (error) {
+      this.loggingService.error('Error when creating a user' + error);
+
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException('Failed to find user');
+    }
   }
 
   // Update

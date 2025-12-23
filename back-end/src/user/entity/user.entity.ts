@@ -3,35 +3,36 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('increment')
-  id: string;
+  id: number;
 
   @Column('text', { unique: true })
   email: string;
 
-  @Column('text')
-  name: string;
+  @Column('text', { nullable: true })
+  name?: string;
 
-  @Column('int')
-  age: number;
+  @Column('int', { nullable: true })
+  age?: number;
 
   @Column({
     type: 'enum',
-    enum: ['Male', 'Femele', 'Other'],
+    enum: ['Male', 'Female', 'Other'],
+    nullable: true,
   })
-  sex: string;
+  sex?: string;
 
-  @Column('text')
-  description: string;
+  @Column('text', { nullable: true })
+  description?: string;
 
-  @Column('varchar', { length: 50 })
-  jobTitle: string;
+  @Column('varchar', { length: 50, nullable: true })
+  jobTitle?: string;
 
-  @Column('simple-array')
-  studies: string[];
+  @Column('simple-array', { nullable: true })
+  studies?: string[];
 
-  @Column('simple-array')
-  interests: string[];
+  @Column('simple-array', { nullable: true })
+  interests?: string[];
 
-  @Column('text')
-  notes: string;
+  @Column('text', { nullable: true })
+  notes?: string;
 }

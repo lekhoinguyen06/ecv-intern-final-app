@@ -1,21 +1,22 @@
-export class CreateUserDto {
-  name: string;
-  age: number;
-  sex: string;
-  description: string;
-  jobTitle: string;
-  studies: string[];
-  interests: string[];
-  notes: string;
-}
+import { z } from 'zod';
 
-export class UpdateUserDto {
-  name: string;
-  age: number;
-  sex: string;
-  description: string;
-  jobTitle: string;
-  studies: string[];
-  interests: string[];
-  notes: string;
-}
+const UserObjectSchema = z
+  .object({
+    email: z.email(),
+    name: z.string(),
+    age: z.number(),
+    sex: z.string(),
+    description: z.string(),
+    jobTitle: z.string(),
+    studies: z.array(z.string()),
+    interests: z.array(z.string()),
+    notes: z.string(),
+  })
+  .partial()
+  .required({ email: true });
+
+export const CreateUserSchema = UserObjectSchema;
+export const UpdateUserSchema = UserObjectSchema;
+
+export type CreateUserDto = z.infer<typeof UserObjectSchema>;
+export type UpdateUserDto = z.infer<typeof UserObjectSchema>;
