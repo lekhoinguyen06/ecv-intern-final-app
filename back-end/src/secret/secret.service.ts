@@ -9,7 +9,7 @@ export class SecretManagerService {
   private client: SecretsManagerClient;
   constructor() {
     this.client = new SecretsManagerClient({
-      region: process.env.AWS_REGION || 'us-east-1',
+      region: process.env.AWS_REGION || 'us-southeast-1',
     });
   }
   async load<T>(secretName: string): Promise<T> {

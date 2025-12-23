@@ -16,7 +16,7 @@ let SecretManagerService = class SecretManagerService {
     client;
     constructor() {
         this.client = new client_secrets_manager_1.SecretsManagerClient({
-            region: process.env.AWS_REGION || 'us-east-1',
+            region: process.env.AWS_REGION || 'us-southeast-1',
         });
     }
     async load(secretName) {
