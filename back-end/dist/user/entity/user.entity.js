@@ -26,45 +26,46 @@ let User = class User {
 exports.User = User;
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)('increment'),
-    __metadata("design:type", String)
+    __metadata("design:type", Number)
 ], User.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Column)('text', { unique: true }),
     __metadata("design:type", String)
 ], User.prototype, "email", void 0);
 __decorate([
-    (0, typeorm_1.Column)('text'),
+    (0, typeorm_1.Column)('text', { nullable: true }),
     __metadata("design:type", String)
 ], User.prototype, "name", void 0);
 __decorate([
-    (0, typeorm_1.Column)('int'),
+    (0, typeorm_1.Column)('int', { nullable: true }),
     __metadata("design:type", Number)
 ], User.prototype, "age", void 0);
 __decorate([
     (0, typeorm_1.Column)({
         type: 'enum',
-        enum: ['Male', 'Femele', 'Other'],
+        enum: ['Male', 'Female', 'Other'],
+        nullable: true,
     }),
     __metadata("design:type", String)
 ], User.prototype, "sex", void 0);
 __decorate([
-    (0, typeorm_1.Column)('text'),
+    (0, typeorm_1.Column)('text', { nullable: true }),
     __metadata("design:type", String)
 ], User.prototype, "description", void 0);
 __decorate([
-    (0, typeorm_1.Column)('varchar', { length: 50 }),
+    (0, typeorm_1.Column)('varchar', { length: 50, nullable: true }),
     __metadata("design:type", String)
 ], User.prototype, "jobTitle", void 0);
 __decorate([
-    (0, typeorm_1.Column)('simple-array'),
+    (0, typeorm_1.Column)('simple-array', { nullable: true }),
     __metadata("design:type", Array)
 ], User.prototype, "studies", void 0);
 __decorate([
-    (0, typeorm_1.Column)('simple-array'),
+    (0, typeorm_1.Column)('simple-array', { nullable: true }),
     __metadata("design:type", Array)
 ], User.prototype, "interests", void 0);
 __decorate([
-    (0, typeorm_1.Column)('text'),
+    (0, typeorm_1.Column)('text', { nullable: true }),
     __metadata("design:type", String)
 ], User.prototype, "notes", void 0);
 exports.User = User = __decorate([

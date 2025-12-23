@@ -14,6 +14,28 @@ const user_module_1 = require("./user/user.module");
 const typeorm_1 = require("@nestjs/typeorm");
 const user_entity_1 = require("./user/entity/user.entity");
 const logger_module_1 = require("./logger/logger.module");
+const secret_module_1 = require("./secret/secret.module");
+const secret_service_1 = require("./secret/secret.service");
+async function setupDBCredentials(secretManager) {
+    const dbSecret = await secretManager.load(process.env.SECRET_NAME ?? 'rds!db-a92b39b1-e81e-4780-999b-87d7c95ad8c8');
+    return {
+        type: 'postgres',
+        host: dbSecret?.host ??
+            'ecv-intern-rds.cpw4gissg1ma.ap-southeast-1.rds.amazonaws.com',
+        port: dbSecret?.port ?? 5432,
+        username: dbSecret?.username ?? 'postgres',
+        password: dbSecret.password,
+        database: dbSecret?.database ?? 'postgres',
+        entities: [user_entity_1.User],
+        synchronize: true,
+        ssl: true,
+        extra: {
+            ssl: {
+                rejectUnauthorized: false,
+            },
+        },
+    };
+}
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -22,20 +44,11 @@ exports.AppModule = AppModule = __decorate([
         imports: [
             user_module_1.UserModule,
             logger_module_1.LoggerModule,
-            typeorm_1.TypeOrmModule.forRoot({
-                type: 'postgres',
-                host: 'ecv-intern-rds.cpw4gissg1ma.ap-southeast-1.rds.amazonaws.com',
-                port: 5432,
-                username: 'postgres',
-                password: ':]ap6uTy|A.>x3psqSX*!#l1<WT|',
-                database: 'postgres',
-                entities: [user_entity_1.User],
-                synchronize: true,
-                ssl: true,
-                extra: {
-                    ssl: {
-                        rejectUnauthorized: false,
-                    },
+            typeorm_1.TypeOrmModule.forRootAsync({
+                imports: [secret_module_1.SecretModule],
+                inject: [secret_service_1.SecretManagerService],
+                useFactory: async (secretManager) => {
+                    return await setupDBCredentials(secretManager);
                 },
             }),
         ],

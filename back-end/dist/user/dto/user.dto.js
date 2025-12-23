@@ -1,26 +1,21 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateUserDto = exports.CreateUserDto = void 0;
-class CreateUserDto {
-    name;
-    age;
-    sex;
-    description;
-    jobTitle;
-    studies;
-    interests;
-    notes;
-}
-exports.CreateUserDto = CreateUserDto;
-class UpdateUserDto {
-    name;
-    age;
-    sex;
-    description;
-    jobTitle;
-    studies;
-    interests;
-    notes;
-}
-exports.UpdateUserDto = UpdateUserDto;
+exports.UpdateUserSchema = exports.CreateUserSchema = void 0;
+const zod_1 = require("zod");
+const UserObjectSchema = zod_1.z
+    .object({
+    email: zod_1.z.email(),
+    name: zod_1.z.string(),
+    age: zod_1.z.number(),
+    sex: zod_1.z.string(),
+    description: zod_1.z.string(),
+    jobTitle: zod_1.z.string(),
+    studies: zod_1.z.array(zod_1.z.string()),
+    interests: zod_1.z.array(zod_1.z.string()),
+    notes: zod_1.z.string(),
+})
+    .partial()
+    .required({ email: true });
+exports.CreateUserSchema = UserObjectSchema;
+exports.UpdateUserSchema = UserObjectSchema;
 //# sourceMappingURL=user.dto.js.map

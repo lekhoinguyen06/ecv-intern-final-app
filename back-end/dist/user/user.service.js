@@ -27,12 +27,33 @@ let UserService = class UserService {
     }
     users = [];
     create(user) {
-        this.usersRepository.create(user);
-        this.loggingService.info('Created a user');
+        try {
+            const savedUser = this.usersRepository.create(user);
+            this.loggingService.info(`Created user with email: ${savedUser.id}`);
+        }
+        catch (error) {
+            this.loggingService.error('Error when creating a user' + error);
+            throw error;
+        }
     }
-    findOne(email) {
-        this.loggingService.info('Found a user with email' + email);
-        return this.usersRepository.findOneBy({ email });
+    async findOne(email) {
+        try {
+            const existingUser = await this.usersRepository.findOneBy({ email });
+            this.loggingService.info('Found a user with email' + email);
+            if (existingUser) {
+                return existingUser;
+            }
+            else {
+                throw new common_1.BadRequestException(`Error when finding user: user with email ${email} does not exist`);
+            }
+        }
+        catch (error) {
+            this.loggingService.error('Error when creating a user' + error);
+            if (error instanceof common_1.BadRequestException) {
+                throw error;
+            }
+            throw new common_1.InternalServerErrorException('Failed to find user');
+        }
     }
 };
 exports.UserService = UserService;
