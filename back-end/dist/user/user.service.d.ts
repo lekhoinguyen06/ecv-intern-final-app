@@ -7,6 +7,6 @@ export declare class UserService {
     private loggingService;
     constructor(usersRepository: Repository<User>, loggingService: LoggingService);
     private readonly users;
-    create(user: CreateUserDto): void;
+    create(user: CreateUserDto): Promise<void>;
     findOne(email: string): Promise<User | null>;
 }

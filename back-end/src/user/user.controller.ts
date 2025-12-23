@@ -22,7 +22,7 @@ export class UserController {
   // POST /users
   @Post()
   @UsePipes(new ZodValidationPipe(CreateUserSchema))
-  create(@Body() createUserDto: CreateUserDto): void {
+  create(@Body() createUserDto: CreateUserDto): Promise<void> {
     return this.userService.create(createUserDto);
   }
 

@@ -26,9 +26,10 @@ let UserService = class UserService {
         this.loggingService = loggingService;
     }
     users = [];
-    create(user) {
+    async create(user) {
         try {
-            const savedUser = this.usersRepository.create(user);
+            const userEntity = this.usersRepository.create(user);
+            const savedUser = await this.usersRepository.save(userEntity);
             this.loggingService.info(`Created user with email: ${savedUser.id}`);
         }
         catch (error) {

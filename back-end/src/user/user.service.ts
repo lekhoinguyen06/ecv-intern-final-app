@@ -20,9 +20,10 @@ export class UserService {
 
   private readonly users: User[] = [];
 
-  create(user: CreateUserDto) {
+  async create(user: CreateUserDto) {
     try {
-      const savedUser = this.usersRepository.create(user);
+      const userEntity = this.usersRepository.create(user);
+      const savedUser = await this.usersRepository.save(userEntity);
       this.loggingService.info(`Created user with email: ${savedUser.id}`);
     } catch (error) {
       this.loggingService.error('Error when creating a user' + error);
