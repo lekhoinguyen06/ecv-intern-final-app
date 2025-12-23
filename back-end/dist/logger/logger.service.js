@@ -41,17 +41,20 @@ var __importStar = (this && this.__importStar) || (function () {
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LoggingService = void 0;
 const common_1 = require("@nestjs/common");
 const winston = __importStar(require("winston"));
-const CloudWatchTransport = __importStar(require("winston-aws-cloudwatch"));
+const winston_aws_cloudwatch_1 = __importDefault(require("winston-aws-cloudwatch"));
 let LoggingService = class LoggingService {
     logger;
     constructor() {
         this.logger = winston.createLogger({
             transports: [
-                new CloudWatchTransport({
+                new winston_aws_cloudwatch_1.default({
                     logGroupName: 'ecv-intern-log-group',
                     logStreamName: 'ecv-intern-log-stream',
                     createLogGroup: true,

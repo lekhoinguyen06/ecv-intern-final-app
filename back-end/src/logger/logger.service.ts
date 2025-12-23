@@ -1,6 +1,6 @@
 import { Injectable, Scope } from '@nestjs/common';
 import * as winston from 'winston';
-import * as CloudWatchTransport from 'winston-aws-cloudwatch';
+import CloudWatchTransport from 'winston-aws-cloudwatch';
 
 // Transient scope create unique logger instance for each consuming feature modules
 @Injectable({ scope: Scope.TRANSIENT })
