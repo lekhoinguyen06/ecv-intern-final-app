@@ -9,12 +9,12 @@ import { User } from './user/entity/user.entity';
   imports: [
     UserModule,
     TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'root',
-      database: 'test',
+      type: 'postgres',
+      host: 'ecv-intern-rds.cpw4gissg1ma.ap-southeast-1.rds.amazonaws.com',
+      port: 5432,
+      username: 'postgres',
+      password: ':]ap6uTy|A.>x3psqSX*!#l1<WT|',
+      database: 'postgres',
       entities: [User],
       synchronize: true, // Sync with database (turn off for productions - otherwise you can lose production data)
     }),
