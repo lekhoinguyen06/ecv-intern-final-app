@@ -7,14 +7,12 @@ import { User } from './user/entity/user.entity';
 import { LoggerModule } from './logger/logger.module';
 import { SecretModule } from './secret/secret.module';
 import { SecretManagerService } from './secret/secret.service';
+import { ConfigModule } from '@nestjs/config';
 
 async function setupDBCredentials(secretManager: SecretManagerService) {
   interface DBSecret {
-    host: string;
-    port: number;
     username: string;
     password: string;
-    database: string;
   }
   const dbSecret: DBSecret = await secretManager.load(
     process.env.SECRET_NAME ?? 'rds!db-a92b39b1-e81e-4780-999b-87d7c95ad8c8',
@@ -22,12 +20,12 @@ async function setupDBCredentials(secretManager: SecretManagerService) {
   return {
     type: 'postgres',
     host:
-      dbSecret?.host ??
+      process.env.DB_HOST ??
       'ecv-intern-rds.cpw4gissg1ma.ap-southeast-1.rds.amazonaws.com',
-    port: dbSecret?.port ?? 5432,
-    username: dbSecret?.username ?? 'postgres',
+    port: process.env.DB_PORT ?? 5432,
+    username: dbSecret?.username || process.env.DB_USERNAME || 'postgres',
     password: dbSecret.password,
-    database: dbSecret?.database ?? 'postgres',
+    database: process.env.DB_DATABASE ?? 'postgres',
     entities: [User],
     synchronize: true, // Sync with database (turn off for productions - otherwise you can lose production data)
     ssl: true,
@@ -43,6 +41,9 @@ async function setupDBCredentials(secretManager: SecretManagerService) {
   imports: [
     UserModule,
     LoggerModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     TypeOrmModule.forRootAsync({
       imports: [SecretModule],
       inject: [SecretManagerService],

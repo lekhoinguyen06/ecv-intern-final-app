@@ -16,16 +16,17 @@ const user_entity_1 = require("./user/entity/user.entity");
 const logger_module_1 = require("./logger/logger.module");
 const secret_module_1 = require("./secret/secret.module");
 const secret_service_1 = require("./secret/secret.service");
+const config_1 = require("@nestjs/config");
 async function setupDBCredentials(secretManager) {
     const dbSecret = await secretManager.load(process.env.SECRET_NAME ?? 'rds!db-a92b39b1-e81e-4780-999b-87d7c95ad8c8');
     return {
         type: 'postgres',
-        host: dbSecret?.host ??
+        host: process.env.DB_HOST ??
             'ecv-intern-rds.cpw4gissg1ma.ap-southeast-1.rds.amazonaws.com',
-        port: dbSecret?.port ?? 5432,
-        username: dbSecret?.username ?? 'postgres',
+        port: process.env.DB_PORT ?? 5432,
+        username: dbSecret?.username || process.env.DB_USERNAME || 'postgres',
         password: dbSecret.password,
-        database: dbSecret?.database ?? 'postgres',
+        database: process.env.DB_DATABASE ?? 'postgres',
         entities: [user_entity_1.User],
         synchronize: true,
         ssl: true,
@@ -44,6 +45,9 @@ exports.AppModule = AppModule = __decorate([
         imports: [
             user_module_1.UserModule,
             logger_module_1.LoggerModule,
+            config_1.ConfigModule.forRoot({
+                isGlobal: true,
+            }),
             typeorm_1.TypeOrmModule.forRootAsync({
                 imports: [secret_module_1.SecretModule],
                 inject: [secret_service_1.SecretManagerService],
