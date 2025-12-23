@@ -4,10 +4,12 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/entity/user.entity';
+import { LoggerModule } from './logger/logger.module';
 
 @Module({
   imports: [
     UserModule,
+    LoggerModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'ecv-intern-rds.cpw4gissg1ma.ap-southeast-1.rds.amazonaws.com',

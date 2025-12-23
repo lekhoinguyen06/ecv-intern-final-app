@@ -17,16 +17,21 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const user_entity_1 = require("./entity/user.entity");
+const logger_service_1 = require("../logger/logger.service");
 let UserService = class UserService {
     usersRepository;
-    constructor(usersRepository) {
+    loggingService;
+    constructor(usersRepository, loggingService) {
         this.usersRepository = usersRepository;
+        this.loggingService = loggingService;
     }
     users = [];
     create(user) {
         this.usersRepository.create(user);
+        this.loggingService.info('Created a user');
     }
     findOne(email) {
+        this.loggingService.info('Found a user with email' + email);
         return this.usersRepository.findOneBy({ email });
     }
 };
@@ -34,6 +39,7 @@ exports.UserService = UserService;
 exports.UserService = UserService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        logger_service_1.LoggingService])
 ], UserService);
 //# sourceMappingURL=user.service.js.map
