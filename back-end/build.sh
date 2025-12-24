@@ -1,7 +1,7 @@
 # Build front-end and move static file
 cd ~/ecv-intern-final-app/front-end
 pnpm run build
-cp -r ./out/* ~/ecv-intern-final-app/back-end/client/
+cp -r ./out/* ~/ecv-intern-final-app/back-end/src/lient/
 
 # Build server 
 cd ~/ecv-intern-final-app/back-end
