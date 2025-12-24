@@ -42,8 +42,8 @@ async function setupDBCredentials(secretManager: SecretManagerService) {
 @Module({
   imports: [
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', '..', 'frontend', 'out'),
-      exclude: ['/api/(.*)', '/health'],
+      rootPath: join(__dirname, '..', '..', 'front-end', 'out'),
+      exclude: ['/api/*', '/health'],
     }),
     UserModule,
     LoggerModule,
