@@ -1,15 +1,15 @@
 # Build front-end and move static file
-cd ~/ecv-intern-final-app/front-end
+cd ../front-end
 pnpm run build
-cp -r ./out/* ~/ecv-intern-final-app/back-end/src/client/
+cp -r ./out/* ../back-end/src/client/
 
 # Build server 
-cd ~/ecv-intern-final-app/back-end
+cd ../back-end
 pnpm run lint
 pnpm run build
 
 # Commit to remote repository when -m tag is given
-cd ~/ecv-intern-final-app/
+cd ../
 while getopts "m:" opt; do
   case $opt in
     m) COMMIT_MESSAGE="$OPTARG" ;;
