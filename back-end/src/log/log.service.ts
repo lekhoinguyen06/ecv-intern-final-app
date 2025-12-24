@@ -4,11 +4,16 @@ import WinstonCloudWatch from 'winston-cloudwatch';
 
 // Transient scope create unique logger instance for each consuming feature modules
 @Injectable({ scope: Scope.TRANSIENT })
-export class LoggingService {
+export class LogService {
   private logger: winston.Logger;
 
   constructor() {
     this.logger = winston.createLogger({
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.errors({ stack: true }),
+        winston.format.json(),
+      ),
       transports: [
         new winston.transports.Console(),
         new WinstonCloudWatch({
@@ -28,7 +33,7 @@ export class LoggingService {
     this.logger.warn(warn);
   }
 
-  error(error: string) {
-    this.logger.error(error);
+  error(message: string, error?: Error, context?: object) {
+    this.logger.error(message, { error, context });
   }
 }

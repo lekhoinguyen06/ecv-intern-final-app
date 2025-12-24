@@ -11,16 +11,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CatchEverythingFilter = void 0;
 const common_1 = require("@nestjs/common");
-const logger_service_1 = require("../logger/logger.service");
+const log_service_1 = require("../log/log.service");
 let CatchEverythingFilter = class CatchEverythingFilter {
-    loggingService;
-    constructor(loggingService) {
-        this.loggingService = loggingService;
+    logService;
+    constructor(logService) {
+        this.logService = logService;
     }
     catch(exception) {
+        const error = exception instanceof Error ? exception : new Error(String(exception));
         if (!(exception instanceof common_1.HttpException)) {
-            this.loggingService.error('Global filters caught unhandled exception: ' +
-                JSON.stringify(exception));
+            this.logService.error('Global filters caught unhandled exception: ', error);
         }
     }
 };
@@ -28,6 +28,6 @@ exports.CatchEverythingFilter = CatchEverythingFilter;
 exports.CatchEverythingFilter = CatchEverythingFilter = __decorate([
     (0, common_1.Catch)(),
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [logger_service_1.LoggingService])
+    __metadata("design:paramtypes", [log_service_1.LogService])
 ], CatchEverythingFilter);
 //# sourceMappingURL=catchEverything.filter.js.map

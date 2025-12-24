@@ -45,14 +45,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LoggingService = void 0;
+exports.LogService = void 0;
 const common_1 = require("@nestjs/common");
 const winston = __importStar(require("winston"));
 const winston_cloudwatch_1 = __importDefault(require("winston-cloudwatch"));
-let LoggingService = class LoggingService {
+let LogService = class LogService {
     logger;
     constructor() {
         this.logger = winston.createLogger({
+            format: winston.format.combine(winston.format.timestamp(), winston.format.errors({ stack: true }), winston.format.json()),
             transports: [
                 new winston.transports.Console(),
                 new winston_cloudwatch_1.default({
@@ -69,13 +70,13 @@ let LoggingService = class LoggingService {
     warn(warn) {
         this.logger.warn(warn);
     }
-    error(error) {
-        this.logger.error(error);
+    error(message, error, context) {
+        this.logger.error(message, { error, context });
     }
 };
-exports.LoggingService = LoggingService;
-exports.LoggingService = LoggingService = __decorate([
+exports.LogService = LogService;
+exports.LogService = LogService = __decorate([
     (0, common_1.Injectable)({ scope: common_1.Scope.TRANSIENT }),
     __metadata("design:paramtypes", [])
-], LoggingService);
-//# sourceMappingURL=logger.service.js.map
+], LogService);
+//# sourceMappingURL=log.service.js.map

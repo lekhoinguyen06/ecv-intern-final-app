@@ -17,25 +17,25 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const user_entity_1 = require("./entity/user.entity");
-const logger_service_1 = require("../logger/logger.service");
+const log_service_1 = require("../log/log.service");
 let UserService = class UserService {
     usersRepository;
-    loggingService;
-    constructor(usersRepository, loggingService) {
+    logService;
+    constructor(usersRepository, logService) {
         this.usersRepository = usersRepository;
-        this.loggingService = loggingService;
+        this.logService = logService;
     }
     async create(user) {
         try {
             const userEntity = this.usersRepository.create(user);
             const savedUser = await this.usersRepository.save(userEntity);
-            this.loggingService.info(`Created user with email: ${savedUser.id}`);
+            this.logService.info(`Created user with email: ${savedUser.id}`);
         }
         catch (error) {
             if (error instanceof typeorm_2.QueryFailedError) {
                 throw new common_1.BadRequestException('Error when creating user: ' + error.message);
             }
-            this.loggingService.error('Error from user-service-create()' + error);
+            this.logService.error('Error from user-service-create()' + error);
             throw error;
         }
     }
@@ -53,7 +53,7 @@ let UserService = class UserService {
             if (error instanceof common_1.BadRequestException) {
                 throw error;
             }
-            this.loggingService.error('Error from user-service-findone()' + error);
+            this.logService.error('Error from user-service-findone()' + error);
             throw new common_1.InternalServerErrorException();
         }
     }
@@ -63,6 +63,6 @@ exports.UserService = UserService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
-        logger_service_1.LoggingService])
+        log_service_1.LogService])
 ], UserService);
 //# sourceMappingURL=user.service.js.map

@@ -13,7 +13,7 @@ const app_service_1 = require("./app.service");
 const user_module_1 = require("./user/user.module");
 const typeorm_1 = require("@nestjs/typeorm");
 const user_entity_1 = require("./user/entity/user.entity");
-const logger_module_1 = require("./logger/logger.module");
+const log_module_1 = require("./log/log.module");
 const secret_module_1 = require("./secret/secret.module");
 const secret_service_1 = require("./secret/secret.service");
 const config_1 = require("@nestjs/config");
@@ -50,7 +50,7 @@ exports.AppModule = AppModule = __decorate([
                 exclude: ['/api', '/health'],
             }),
             user_module_1.UserModule,
-            logger_module_1.LoggerModule,
+            log_module_1.LogModule,
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
             }),

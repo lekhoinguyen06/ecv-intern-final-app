@@ -1,7 +1,7 @@
 import { ExceptionFilter } from '@nestjs/common';
-import { LoggingService } from 'src/logger/logger.service';
+import { LogService } from 'src/log/log.service';
 export declare class CatchEverythingFilter implements ExceptionFilter {
-    private loggingService;
-    constructor(loggingService: LoggingService);
+    private logService;
+    constructor(logService: LogService);
     catch(exception: unknown): void;
 }

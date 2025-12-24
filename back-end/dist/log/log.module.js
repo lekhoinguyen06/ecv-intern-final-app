@@ -6,16 +6,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LoggerModule = void 0;
+exports.LogModule = void 0;
 const common_1 = require("@nestjs/common");
-const logger_service_1 = require("./logger.service");
-let LoggerModule = class LoggerModule {
+const log_service_1 = require("./log.service");
+let LogModule = class LogModule {
 };
-exports.LoggerModule = LoggerModule;
-exports.LoggerModule = LoggerModule = __decorate([
+exports.LogModule = LogModule;
+exports.LogModule = LogModule = __decorate([
     (0, common_1.Module)({
-        providers: [logger_service_1.LoggingService],
-        exports: [logger_service_1.LoggingService],
+        providers: [log_service_1.LogService],
+        exports: [log_service_1.LogService],
     })
-], LoggerModule);
-//# sourceMappingURL=logger.module.js.map
+], LogModule);
+//# sourceMappingURL=log.module.js.map

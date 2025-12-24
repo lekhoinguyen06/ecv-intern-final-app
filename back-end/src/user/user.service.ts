@@ -8,21 +8,21 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { QueryFailedError, Repository } from 'typeorm';
 import { User as UserEntity } from './entity/user.entity';
 import { CreateUserDto } from './dto/user.dto';
-import { LoggingService } from 'src/logger/logger.service';
+import { LogService } from 'src/log/log.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private usersRepository: Repository<User>,
-    private loggingService: LoggingService,
+    private logService: LogService,
   ) {}
 
   async create(user: CreateUserDto) {
     try {
       const userEntity = this.usersRepository.create(user);
       const savedUser = await this.usersRepository.save(userEntity);
-      this.loggingService.info(`Created user with email: ${savedUser.id}`);
+      this.logService.info(`Created user with email: ${savedUser.id}`);
     } catch (error) {
       // Handle and return TypeORM expected errors
       if (error instanceof QueryFailedError) {
@@ -31,7 +31,7 @@ export class UserService {
         );
       }
 
-      this.loggingService.error('Error from user-service-create()' + error);
+      this.logService.error('Error from user-service-create()' + error);
       throw error;
     }
   }
@@ -50,7 +50,7 @@ export class UserService {
       if (error instanceof BadRequestException) {
         throw error;
       }
-      this.loggingService.error('Error from user-service-findone()' + error);
+      this.logService.error('Error from user-service-findone()' + error);
       throw new InternalServerErrorException();
     }
   }

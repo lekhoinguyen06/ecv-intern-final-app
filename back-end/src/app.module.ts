@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { User } from './user/entity/user.entity';
-import { LoggerModule } from './logger/logger.module';
+import { LogModule } from './log/log.module';
 import { SecretModule } from './secret/secret.module';
 import { SecretManagerService } from './secret/secret.service';
 import { ConfigModule } from '@nestjs/config';
@@ -46,7 +46,7 @@ async function setupDBCredentials(secretManager: SecretManagerService) {
       exclude: ['/api', '/health'],
     }),
     UserModule,
-    LoggerModule,
+    LogModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
