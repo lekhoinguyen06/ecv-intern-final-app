@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { User } from './interfaces/user.interface';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { User as UserEntity } from './entity/user.entity';
 import { CreateUserDto } from './dto/user.dto';
 import { LoggingService } from 'src/logger/logger.service';
@@ -18,14 +18,18 @@ export class UserService {
     private loggingService: LoggingService,
   ) {}
 
-  private readonly users: User[] = [];
-
   async create(user: CreateUserDto) {
     try {
       const userEntity = this.usersRepository.create(user);
       const savedUser = await this.usersRepository.save(userEntity);
       this.loggingService.info(`Created user with email: ${savedUser.id}`);
     } catch (error) {
+      if (error instanceof QueryFailedError) {
+        throw new BadRequestException(
+          'Message: ' + error.message + 'Cause: ' + error.cause,
+        );
+      }
+
       this.loggingService.error('Error when creating a user' + error);
       throw error;
     }

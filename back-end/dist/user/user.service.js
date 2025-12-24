@@ -25,7 +25,6 @@ let UserService = class UserService {
         this.usersRepository = usersRepository;
         this.loggingService = loggingService;
     }
-    users = [];
     async create(user) {
         try {
             const userEntity = this.usersRepository.create(user);
@@ -33,6 +32,9 @@ let UserService = class UserService {
             this.loggingService.info(`Created user with email: ${savedUser.id}`);
         }
         catch (error) {
+            if (error instanceof typeorm_2.QueryFailedError) {
+                throw new common_1.BadRequestException('Message: ' + error.message + 'Cause: ' + error.cause);
+            }
             this.loggingService.error('Error when creating a user' + error);
             throw error;
         }
