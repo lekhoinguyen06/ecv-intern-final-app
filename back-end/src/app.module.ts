@@ -8,6 +8,8 @@ import { LoggerModule } from './logger/logger.module';
 import { SecretModule } from './secret/secret.module';
 import { SecretManagerService } from './secret/secret.service';
 import { ConfigModule } from '@nestjs/config';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 async function setupDBCredentials(secretManager: SecretManagerService) {
   interface DBSecret {
@@ -39,6 +41,10 @@ async function setupDBCredentials(secretManager: SecretManagerService) {
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', '..', 'frontend', 'out'),
+      exclude: ['/api/*'],
+    }),
     UserModule,
     LoggerModule,
     ConfigModule.forRoot({

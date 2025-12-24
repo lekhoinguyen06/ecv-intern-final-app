@@ -17,6 +17,8 @@ const logger_module_1 = require("./logger/logger.module");
 const secret_module_1 = require("./secret/secret.module");
 const secret_service_1 = require("./secret/secret.service");
 const config_1 = require("@nestjs/config");
+const serve_static_1 = require("@nestjs/serve-static");
+const path_1 = require("path");
 async function setupDBCredentials(secretManager) {
     const dbSecret = await secretManager.load(process.env.SECRET_NAME ?? 'rds!db-a92b39b1-e81e-4780-999b-87d7c95ad8c8');
     return {
@@ -43,6 +45,10 @@ exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
+            serve_static_1.ServeStaticModule.forRoot({
+                rootPath: (0, path_1.join)(__dirname, '..', '..', 'frontend', 'out'),
+                exclude: ['/api/*'],
+            }),
             user_module_1.UserModule,
             logger_module_1.LoggerModule,
             config_1.ConfigModule.forRoot({
