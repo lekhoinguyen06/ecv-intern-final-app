@@ -20,12 +20,13 @@ export class UserService {
       const savedUser = await this.usersRepository.save(userEntity);
       this.logService.info(`Created user with email: ${savedUser.id}`);
     } catch (error) {
-      // Handle and return TypeORM expected errors
+      // Handle TypeORM database errors
       if (error instanceof QueryFailedError) {
         throw new BadRequestException(
           'Error when creating user: ' + error.message,
         );
       }
+      throw error;
     }
   }
 
@@ -40,12 +41,13 @@ export class UserService {
         );
       }
     } catch (error) {
-      // Handle and return TypeORM expected errors
+      // Handle TypeORM database errors
       if (error instanceof QueryFailedError) {
         throw new BadRequestException(
-          'Error when creating user: ' + error.message,
+          'Error when finding user: ' + error.message,
         );
       }
+      throw error;
     }
   }
 
