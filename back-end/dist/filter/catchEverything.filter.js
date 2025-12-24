@@ -18,7 +18,10 @@ let CatchEverythingFilter = class CatchEverythingFilter {
         this.loggingService = loggingService;
     }
     catch(exception) {
-        this.loggingService.error('Global filters caught unhandled exception: ' + JSON.stringify(exception));
+        if (!(exception instanceof common_1.HttpException)) {
+            this.loggingService.error('Global filters caught unhandled exception: ' +
+                JSON.stringify(exception));
+        }
     }
 };
 exports.CatchEverythingFilter = CatchEverythingFilter;
