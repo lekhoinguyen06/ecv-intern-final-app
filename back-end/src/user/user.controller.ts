@@ -16,7 +16,7 @@ import {
 import { User } from './interfaces/user.interface';
 import { ZodValidationPipe } from 'src/pipe/zod.pipe';
 
-@Controller('user')
+@Controller('api/user')
 export class UserController {
   constructor(private userService: UserService) {}
   // POST /users

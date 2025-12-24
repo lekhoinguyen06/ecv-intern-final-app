@@ -48,24 +48,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LoggingService = void 0;
 const common_1 = require("@nestjs/common");
 const winston = __importStar(require("winston"));
-const winston_aws_cloudwatch_1 = __importDefault(require("winston-aws-cloudwatch"));
+const winston_cloudwatch_1 = __importDefault(require("winston-cloudwatch"));
 let LoggingService = class LoggingService {
     logger;
     constructor() {
         this.logger = winston.createLogger({
             transports: [
-                new winston_aws_cloudwatch_1.default({
+                new winston.transports.Console(),
+                new winston_cloudwatch_1.default({
                     logGroupName: 'ecv-intern-log-group',
                     logStreamName: 'ecv-intern-log-stream',
-                    createLogGroup: true,
-                    createLogStream: true,
-                    submissionInterval: 2000,
-                    submissionRetryCount: 1,
-                    batchSize: 20,
-                    awsConfig: {
-                        region: 'ap-southeast-1',
-                    },
-                    formatLog: (item) => `Winston log: ${JSON.stringify(item)}`,
+                    awsRegion: 'ap-southeast-1',
                 }),
             ],
         });
