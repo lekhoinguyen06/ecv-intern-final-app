@@ -1,7 +1,7 @@
 # Build front-end and move static file
 cd ../front-end
 pnpm run build
-cp -r ./out/* ../back-end/src/client/
+cp -r ./out/* ../back-end/client/
 
 # Build server 
 cd ../back-end
