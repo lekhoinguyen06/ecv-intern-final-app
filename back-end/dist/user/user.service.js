@@ -35,8 +35,6 @@ let UserService = class UserService {
             if (error instanceof typeorm_2.QueryFailedError) {
                 throw new common_1.BadRequestException('Error when creating user: ' + error.message);
             }
-            this.logService.error('Error from user-service-create()' + error);
-            throw error;
         }
     }
     async findOne(email) {
@@ -50,11 +48,9 @@ let UserService = class UserService {
             }
         }
         catch (error) {
-            if (error instanceof common_1.BadRequestException) {
-                throw error;
+            if (error instanceof typeorm_2.QueryFailedError) {
+                throw new common_1.BadRequestException('Error when creating user: ' + error.message);
             }
-            this.logService.error('Error from user-service-findone()' + error);
-            throw new common_1.InternalServerErrorException();
         }
     }
 };

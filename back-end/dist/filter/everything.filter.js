@@ -9,25 +9,32 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CatchEverythingFilter = void 0;
+exports.GlobalExceptionFilter = void 0;
 const common_1 = require("@nestjs/common");
 const log_service_1 = require("../log/log.service");
-let CatchEverythingFilter = class CatchEverythingFilter {
+let GlobalExceptionFilter = class GlobalExceptionFilter {
     logService;
     constructor(logService) {
         this.logService = logService;
     }
-    catch(exception) {
-        const error = exception instanceof Error ? exception : new Error(String(exception));
-        if (!(exception instanceof common_1.HttpException)) {
-            this.logService.error('Global filters caught unhandled exception: ', error);
-        }
+    catch(exception, host) {
+        const ctx = host.switchToHttp();
+        const response = ctx.getResponse();
+        const request = ctx.getRequest();
+        const status = exception.getStatus();
+        this.logService.error(exception.message, exception);
+        response.status(status).json({
+            statusCode: status,
+            timestamp: new Date().toISOString(),
+            path: request.url,
+            message: exception.message,
+        });
     }
 };
-exports.CatchEverythingFilter = CatchEverythingFilter;
-exports.CatchEverythingFilter = CatchEverythingFilter = __decorate([
-    (0, common_1.Catch)(),
+exports.GlobalExceptionFilter = GlobalExceptionFilter;
+exports.GlobalExceptionFilter = GlobalExceptionFilter = __decorate([
+    (0, common_1.Catch)(common_1.HttpException),
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [log_service_1.LogService])
-], CatchEverythingFilter);
-//# sourceMappingURL=catchEverything.filter.js.map
+], GlobalExceptionFilter);
+//# sourceMappingURL=everything.filter.js.map

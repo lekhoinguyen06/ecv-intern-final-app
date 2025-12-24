@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { User } from './interfaces/user.interface';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueryFailedError, Repository } from 'typeorm';
@@ -30,13 +26,10 @@ export class UserService {
           'Error when creating user: ' + error.message,
         );
       }
-
-      this.logService.error('Error from user-service-create()' + error);
-      throw error;
     }
   }
 
-  async findOne(email: string): Promise<User | null> {
+  async findOne(email: string): Promise<User | undefined> {
     try {
       const existingUser = await this.usersRepository.findOneBy({ email });
       if (existingUser) {
@@ -47,11 +40,12 @@ export class UserService {
         );
       }
     } catch (error) {
-      if (error instanceof BadRequestException) {
-        throw error;
+      // Handle and return TypeORM expected errors
+      if (error instanceof QueryFailedError) {
+        throw new BadRequestException(
+          'Error when creating user: ' + error.message,
+        );
       }
-      this.logService.error('Error from user-service-findone()' + error);
-      throw new InternalServerErrorException();
     }
   }
 

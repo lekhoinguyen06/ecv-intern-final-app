@@ -7,5 +7,5 @@ export declare class UserService {
     private logService;
     constructor(usersRepository: Repository<User>, logService: LogService);
     create(user: CreateUserDto): Promise<void>;
-    findOne(email: string): Promise<User | null>;
+    findOne(email: string): Promise<User | undefined>;
 }
