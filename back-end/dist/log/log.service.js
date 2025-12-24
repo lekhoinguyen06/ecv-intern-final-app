@@ -76,7 +76,7 @@ let LogService = class LogService {
 };
 exports.LogService = LogService;
 exports.LogService = LogService = __decorate([
-    (0, common_1.Injectable)({ scope: common_1.Scope.TRANSIENT }),
+    (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [])
 ], LogService);
 //# sourceMappingURL=log.service.js.map
