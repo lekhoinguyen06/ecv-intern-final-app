@@ -1,6 +1,3 @@
-# Go to root
-cd ../
-
 # Process options
 while getopts "m:fp" opt; do
   case $opt in
