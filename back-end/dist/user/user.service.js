@@ -33,7 +33,7 @@ let UserService = class UserService {
         }
         catch (error) {
             if (error instanceof typeorm_2.QueryFailedError) {
-                throw new common_1.BadRequestException('Message: ' + error.message);
+                throw new common_1.BadRequestException('Error when creating user: ' + error.message);
             }
             this.loggingService.error('Error when creating a user' + error);
             throw error;

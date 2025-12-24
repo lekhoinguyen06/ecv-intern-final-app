@@ -25,7 +25,9 @@ export class UserService {
       this.loggingService.info(`Created user with email: ${savedUser.id}`);
     } catch (error) {
       if (error instanceof QueryFailedError) {
-        throw new BadRequestException('Message: ' + error.message);
+        throw new BadRequestException(
+          'Error when creating user: ' + error.message,
+        );
       }
 
       this.loggingService.error('Error when creating a user' + error);
