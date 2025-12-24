@@ -1,20 +1,25 @@
+# Build front-end and move static file
+cd ~/ecv-intern-final-app/front-end
+pnpm run build
+cp -r ./out/* ~/ecv-intern-final-app/back-end/client/
+
+# Build server 
+cd ~/ecv-intern-final-app/back-end
 pnpm run lint
 pnpm run build
-cd ../
 
-# Default tag message
-TAG_MESSAGE="deploy-$(date +%Y%m%d%H%M%S)"
-
-# Parse optional -m argument
+# Commit to remote repository when -m tag is given
+cd ~/ecv-intern-final-app/
 while getopts "m:" opt; do
   case $opt in
-    m) TAG_MESSAGE="$OPTARG"; COMMIT_MESSAGE="$OPTARG" ;;
-    *) echo "Usage: $0 [-m \"commit/tag message\"]"; exit 1 ;;
+    m) COMMIT_MESSAGE="$OPTARG" ;;
+    *) echo "Usage: $0 [-m \"commit message\"]"; exit 1 ;;
   esac
 done
 
-git add . 
-git commit -m "$COMMIT_MESSAGE"
-git push
-cd ./back-end/
+if [ -n "$COMMIT_MESSAGE" ]; then
+  git add . 
+  git commit -m "$COMMIT_MESSAGE"
+  git push
+fi
 
