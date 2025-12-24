@@ -1,6 +1,6 @@
 import { Injectable, Scope } from '@nestjs/common';
 import * as winston from 'winston';
-import CloudWatchTransport from 'winston-aws-cloudwatch';
+import WinstonCloudWatch from 'winston-cloudwatch';
 
 // Transient scope create unique logger instance for each consuming feature modules
 @Injectable({ scope: Scope.TRANSIENT })
@@ -10,18 +10,11 @@ export class LoggingService {
   constructor() {
     this.logger = winston.createLogger({
       transports: [
-        new CloudWatchTransport({
-          logGroupName: 'ecv-intern-log-group', // REQUIRED
-          logStreamName: 'ecv-intern-log-stream', // REQUIRED
-          createLogGroup: true,
-          createLogStream: true,
-          submissionInterval: 2000,
-          submissionRetryCount: 1,
-          batchSize: 20,
-          awsConfig: {
-            region: 'ap-southeast-1',
-          },
-          formatLog: (item: unknown) => `Winston log: ${JSON.stringify(item)}`,
+        new winston.transports.Console(),
+        new WinstonCloudWatch({
+          logGroupName: 'ecv-intern-log-group',
+          logStreamName: 'ecv-intern-log-stream',
+          awsRegion: 'ap-southeast-1',
         }),
       ],
     });
