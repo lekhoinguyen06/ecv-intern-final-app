@@ -6,9 +6,10 @@ while getopts "m:fp" opt; do
   case $opt in
     m) COMMIT_MESSAGE="$OPTARG" ;;
     f)
-      cd ../front-end
+      cd ./front-end
       pnpm run build
       cp -r ./out/* ../back-end/client/
+      cd ../
       ;;
     p) SHOULD_PUSH=true ;;
     *) 
@@ -25,7 +26,9 @@ done
 cd ./back-end
 pnpm run lint
 pnpm run build
+cd ../
 
+# Commit
 if [ -n "$COMMIT_MESSAGE" ]; then
   git add .
   git commit -m "$COMMIT_MESSAGE"
