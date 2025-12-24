@@ -33,7 +33,7 @@ let UserService = class UserService {
         }
         catch (error) {
             if (error instanceof typeorm_2.QueryFailedError) {
-                throw new common_1.BadRequestException('Message: ' + error.message + 'Cause: ' + error.cause);
+                throw new common_1.BadRequestException('Message: ' + error.message);
             }
             this.loggingService.error('Error when creating a user' + error);
             throw error;
@@ -51,11 +51,11 @@ let UserService = class UserService {
             }
         }
         catch (error) {
-            this.loggingService.error('Error when creating a user' + error);
+            this.loggingService.error('Error when finding a user' + error);
             if (error instanceof common_1.BadRequestException) {
                 throw error;
             }
-            throw new common_1.InternalServerErrorException('Failed to find user');
+            throw new common_1.InternalServerErrorException('Server error when finding user');
         }
     }
 };

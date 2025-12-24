@@ -25,9 +25,7 @@ export class UserService {
       this.loggingService.info(`Created user with email: ${savedUser.id}`);
     } catch (error) {
       if (error instanceof QueryFailedError) {
-        throw new BadRequestException(
-          'Message: ' + error.message + 'Cause: ' + error.cause,
-        );
+        throw new BadRequestException('Message: ' + error.message);
       }
 
       this.loggingService.error('Error when creating a user' + error);
@@ -47,13 +45,12 @@ export class UserService {
         );
       }
     } catch (error) {
-      this.loggingService.error('Error when creating a user' + error);
+      this.loggingService.error('Error when finding a user' + error);
 
       if (error instanceof BadRequestException) {
         throw error;
       }
-
-      throw new InternalServerErrorException('Failed to find user');
+      throw new InternalServerErrorException('Server error when finding user');
     }
   }
 
