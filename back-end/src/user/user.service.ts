@@ -24,13 +24,14 @@ export class UserService {
       const savedUser = await this.usersRepository.save(userEntity);
       this.loggingService.info(`Created user with email: ${savedUser.id}`);
     } catch (error) {
+      // Handle and return TypeORM expected errors
       if (error instanceof QueryFailedError) {
         throw new BadRequestException(
           'Error when creating user: ' + error.message,
         );
       }
 
-      this.loggingService.error('Error when creating a user' + error);
+      this.loggingService.error('Error from user-service-create()' + error);
       throw error;
     }
   }
@@ -38,7 +39,6 @@ export class UserService {
   async findOne(email: string): Promise<User | null> {
     try {
       const existingUser = await this.usersRepository.findOneBy({ email });
-      this.loggingService.info('Found a user with email' + email);
       if (existingUser) {
         return existingUser;
       } else {
@@ -47,12 +47,11 @@ export class UserService {
         );
       }
     } catch (error) {
-      this.loggingService.error('Error when finding a user' + error);
-
       if (error instanceof BadRequestException) {
         throw error;
       }
-      throw new InternalServerErrorException('Server error when finding user');
+      this.loggingService.error('Error from user-service-findone()' + error);
+      throw new InternalServerErrorException();
     }
   }
 
