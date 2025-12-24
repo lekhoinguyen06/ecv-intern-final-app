@@ -6,9 +6,9 @@ const log_service_1 = require("./log/log.service");
 const everything_filter_1 = require("./filter/everything.filter");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
-    await app.listen(process.env.PORT ?? 3000);
     const logService = app.get(log_service_1.LogService);
     app.useGlobalFilters(new everything_filter_1.GlobalExceptionFilter(logService));
+    await app.listen(process.env.PORT ?? 3000);
 }
 void bootstrap();
 //# sourceMappingURL=main.js.map
