@@ -21,6 +21,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     // Logging
     this.logService.error(exception.message, exception);
 
+    // Conditional logging here (with exception.cause.expected === ""), no logging
+
+    // Error rate metric here
+
     // Custom error response
     response.status(status).json({
       statusCode: status,

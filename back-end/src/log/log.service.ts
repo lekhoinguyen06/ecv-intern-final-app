@@ -10,7 +10,7 @@ export class LogService {
     this.logger = winston.createLogger({
       format: winston.format.combine(
         winston.format.timestamp(),
-        winston.format.errors({ stack: true }),
+        winston.format.errors(),
         winston.format.json(),
       ),
       transports: [

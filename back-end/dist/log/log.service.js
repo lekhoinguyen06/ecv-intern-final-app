@@ -53,7 +53,7 @@ let LogService = class LogService {
     logger;
     constructor() {
         this.logger = winston.createLogger({
-            format: winston.format.combine(winston.format.timestamp(), winston.format.errors({ stack: true }), winston.format.json()),
+            format: winston.format.combine(winston.format.timestamp(), winston.format.errors(), winston.format.json()),
             transports: [
                 new winston.transports.Console(),
                 new winston_cloudwatch_1.default({
