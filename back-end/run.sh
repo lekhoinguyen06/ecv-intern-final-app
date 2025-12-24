@@ -1,0 +1,1 @@
+pm2 start ./updateServer.sh --name ecv-intern-web-server
