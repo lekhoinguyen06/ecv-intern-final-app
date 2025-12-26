@@ -73,7 +73,7 @@ export class LogService {
   }
 
   error(message: string, error?: Error, context?: object) {
-    this.sillyLogger.error(message, { error, context });
+    this.sillyLogger.error(message, error, context);
     this.cloudWatchLogger.error(message, { error, context });
   }
 }

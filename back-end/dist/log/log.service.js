@@ -98,7 +98,7 @@ let LogService = class LogService {
         this.cloudWatchLogger.warn(warn);
     }
     error(message, error, context) {
-        this.sillyLogger.error(message, { error, context });
+        this.sillyLogger.error(message, error, context);
         this.cloudWatchLogger.error(message, { error, context });
     }
 };
