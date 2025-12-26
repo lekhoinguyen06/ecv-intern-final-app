@@ -10,7 +10,7 @@ async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     const logService = app.get(log_service_1.LogService);
     app.useGlobalInterceptors(new response_intercept_1.SuccessResponseTransformInterceptor());
-    app.useGlobalFilters(new database_filter_1.DatabaseExceptionFilter(), new http_filter_1.HTTPExceptionFilter(logService));
+    app.useGlobalFilters(new database_filter_1.DatabaseExceptionFilter(logService), new http_filter_1.HTTPExceptionFilter(logService));
     logService.silly('🚀 Application starting...');
     await app.listen(process.env.PORT ?? 3000);
     logService.silly('✅ Application is running on port 3000');

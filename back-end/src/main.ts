@@ -11,7 +11,7 @@ async function bootstrap() {
   const logService = app.get(LogService);
   app.useGlobalInterceptors(new SuccessResponseTransformInterceptor());
   app.useGlobalFilters(
-    new DatabaseExceptionFilter(),
+    new DatabaseExceptionFilter(logService),
     new HTTPExceptionFilter(logService),
   );
 

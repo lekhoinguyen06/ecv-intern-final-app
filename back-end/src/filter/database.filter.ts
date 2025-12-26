@@ -3,9 +3,12 @@ import { Request, Response } from 'express';
 import { QueryFailedError } from 'typeorm';
 import pgErrorMapper from './pgErrorMapper';
 import { ErrorResponseDTO } from 'src/dto/res.dto';
+import { LogService } from 'src/log/log.service';
 
 @Catch(QueryFailedError)
 export class DatabaseExceptionFilter implements ExceptionFilter {
+  constructor(private logService: LogService) {}
+
   catch(exception: QueryFailedError, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const request = ctx.getRequest<Request>();
@@ -26,6 +29,9 @@ export class DatabaseExceptionFilter implements ExceptionFilter {
         path: request.url,
       },
     };
+
+    // Logging (will log expected usage error such as conflicting email)
+    this.logService.error(exception.message, exception);
 
     response.status(pgError.httpStatus).json(errorDetail);
   }

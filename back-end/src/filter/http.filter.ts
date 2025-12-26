@@ -13,6 +13,7 @@ import { ErrorObj, ErrorResponseDTO } from 'src/dto/res.dto';
 @Injectable()
 export class HTTPExceptionFilter implements ExceptionFilter {
   constructor(private logService: LogService) {}
+
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
