@@ -50,12 +50,12 @@ const common_1 = require("@nestjs/common");
 const winston = __importStar(require("winston"));
 const winston_cloudwatch_1 = __importDefault(require("winston-cloudwatch"));
 let LogService = class LogService {
-    consoleLogger;
+    sillyLogger;
     cloudWatchLogger;
     metricLogger;
     constructor() {
-        this.consoleLogger = winston.createLogger({
-            level: 'info',
+        this.sillyLogger = winston.createLogger({
+            level: 'silly',
             format: winston.format.combine(winston.format.timestamp(), winston.format.errors({ stack: true }), winston.format.colorize(), winston.format.simple()),
             transports: [new winston.transports.Console()],
         });
@@ -88,10 +88,10 @@ let LogService = class LogService {
         this.metricLogger.info(obj);
     }
     silly(silly) {
-        this.consoleLogger.silly(silly);
+        this.sillyLogger.silly(silly);
     }
     info(info) {
-        this.consoleLogger.info(info);
+        this.cloudWatchLogger.info(info);
     }
     warn(warn) {
         this.cloudWatchLogger.warn(warn);

@@ -1,5 +1,5 @@
 export declare class LogService {
-    private consoleLogger;
+    private sillyLogger;
     private cloudWatchLogger;
     private metricLogger;
     constructor();
