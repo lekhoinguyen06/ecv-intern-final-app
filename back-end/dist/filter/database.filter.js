@@ -17,6 +17,7 @@ let DatabaseExceptionFilter = class DatabaseExceptionFilter {
     catch(exception, host) {
         const ctx = host.switchToHttp();
         const request = ctx.getRequest();
+        const response = ctx.getResponse();
         const pgError = (0, pgErrorMapper_1.default)(exception.driverError?.['code'] ?? '');
         const errorDetail = {
             code: pgError.code,
@@ -25,7 +26,7 @@ let DatabaseExceptionFilter = class DatabaseExceptionFilter {
             timestamp: new Date().toISOString(),
             path: request.url,
         };
-        throw new common_1.HttpException(errorDetail, pgError.httpStatus);
+        response.status(pgError.httpStatus).json(errorDetail);
     }
 };
 exports.DatabaseExceptionFilter = DatabaseExceptionFilter;

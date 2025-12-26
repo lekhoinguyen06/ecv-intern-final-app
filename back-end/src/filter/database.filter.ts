@@ -1,9 +1,4 @@
-import {
-  ExceptionFilter,
-  Catch,
-  ArgumentsHost,
-  HttpException,
-} from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { QueryFailedError } from 'typeorm';
 import pgErrorMapper from './pgErrorMapper';
@@ -14,6 +9,7 @@ export class DatabaseExceptionFilter implements ExceptionFilter {
   catch(exception: QueryFailedError, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const request = ctx.getRequest<Request>();
+    const response = ctx.getResponse<Response>();
     const pgError = pgErrorMapper(
       (exception.driverError?.['code'] as string) ?? '',
     );
@@ -27,6 +23,6 @@ export class DatabaseExceptionFilter implements ExceptionFilter {
       path: request.url,
     };
 
-    throw new HttpException(errorDetail, pgError.httpStatus);
+    response.status(pgError.httpStatus).json(errorDetail);
   }
 }
