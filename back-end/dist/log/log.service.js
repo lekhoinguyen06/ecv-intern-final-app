@@ -52,13 +52,14 @@ const winston_cloudwatch_1 = __importDefault(require("winston-cloudwatch"));
 let LogService = class LogService {
     consoleLogger;
     cloudWatchLogger;
+    metricLogger;
     constructor() {
         this.consoleLogger = winston.createLogger({
-            format: winston.format.combine(winston.format.timestamp(), winston.format.errors(), winston.format.colorize(), winston.format.simple()),
+            format: winston.format.combine(winston.format.timestamp(), winston.format.errors(), winston.format.colorize()),
             transports: [new winston.transports.Console()],
         });
         this.cloudWatchLogger = winston.createLogger({
-            format: winston.format.combine(winston.format.timestamp(), winston.format.errors(), winston.format.colorize(), winston.format.simple()),
+            format: winston.format.combine(winston.format.timestamp(), winston.format.errors(), winston.format.colorize()),
             transports: [
                 new winston.transports.Console(),
                 new winston_cloudwatch_1.default({
@@ -68,12 +69,32 @@ let LogService = class LogService {
                 }),
             ],
         });
+        this.metricLogger = winston.createLogger({
+            format: winston.format.combine(winston.format.timestamp(), winston.format.errors(), winston.format.colorize(), winston.format.json()),
+            transports: [
+                new winston.transports.Console(),
+                new winston_cloudwatch_1.default({
+                    logGroupName: 'ecv-intern-metrics-log-group',
+                    logStreamName: 'ecv-intern-metrics-log-stream',
+                    awsRegion: 'ap-southeast-1',
+                }),
+            ],
+        });
+    }
+    metric(obj) {
+        this.metricLogger.info(obj);
+    }
+    silly(silly) {
+        this.consoleLogger.silly(silly);
     }
     info(info) {
         this.consoleLogger.info(info);
     }
     warn(warn) {
-        this.consoleLogger.warn(warn);
+        this.cloudWatchLogger.warn(warn);
+    }
+    crit(crit) {
+        this.cloudWatchLogger.crit(crit);
     }
     error(message, error, context) {
         this.cloudWatchLogger.error(message, { error, context });
