@@ -2,7 +2,7 @@ import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { QueryFailedError } from 'typeorm';
 import pgErrorMapper from './pgErrorMapper';
-import { ErrorResponseDTO } from 'src/dtos/res.dto';
+import { ErrorResponseDTO } from 'src/dto/res.dto';
 
 @Catch(QueryFailedError)
 export class DatabaseExceptionFilter implements ExceptionFilter {

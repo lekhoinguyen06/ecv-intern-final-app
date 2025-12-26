@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { LogService } from 'src/log/log.service';
-import { ErrorResponseDTO } from 'src/dtos/res.dto';
+import { ErrorResponseDTO } from 'src/dto/res.dto';
 
 @Catch(HttpException)
 @Injectable()
