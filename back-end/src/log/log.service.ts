@@ -15,6 +15,7 @@ export class LogService {
         winston.format.errors(),
         winston.format.colorize(),
       ),
+      transports: [new winston.transports.Console()],
     });
     this.cloudWatchLogger = winston.createLogger({
       format: winston.format.combine(

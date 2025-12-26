@@ -2,7 +2,7 @@ import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { QueryFailedError } from 'typeorm';
 import pgErrorMapper from './pgErrorMapper';
-import { ErrorResponseDTO } from 'src/dtos/res.dto';
+import { ErrorResponseDTO } from 'src/dto/res.dto';
 
 @Catch(QueryFailedError)
 export class DatabaseExceptionFilter implements ExceptionFilter {
@@ -10,21 +10,22 @@ export class DatabaseExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
-    const status = 500;
-    const pgErrorCode = (exception.driverError?.['code'] as string) ?? '';
+    const pgError = pgErrorMapper(
+      (exception.driverError?.['code'] as string) ?? '',
+    );
 
     // Custom error response
     const res: ErrorResponseDTO = {
       status: 'error',
-      statusCode: status,
+      statusCode: pgError.httpStatus,
       error: {
-        code: pgErrorCode,
-        name: pgErrorMapper(pgErrorCode),
+        code: pgError.code,
+        name: pgError.name,
         message: exception.message,
         timestamp: new Date().toISOString(),
         path: request.url,
       },
     };
-    response.status(status).json(res);
+    response.status(pgError.httpStatus).json(res);
   }
 }
