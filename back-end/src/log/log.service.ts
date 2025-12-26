@@ -13,7 +13,6 @@ export class LogService {
       level: 'silly',
       format: winston.format.combine(
         winston.format.timestamp(),
-        winston.format.errors({ stack: true }),
         winston.format.colorize(),
         winston.format.simple(),
       ),
@@ -28,6 +27,7 @@ export class LogService {
         winston.format.json(),
       ),
       transports: [
+        new winston.transports.Console(),
         new WinstonCloudWatch({
           logGroupName: 'ecv-intern-log-group',
           logStreamName: 'ecv-intern-log-stream',
@@ -44,6 +44,7 @@ export class LogService {
         winston.format.json(),
       ),
       transports: [
+        new winston.transports.Console(),
         new WinstonCloudWatch({
           logGroupName: 'ecv-intern-metrics-log-group',
           logStreamName: 'ecv-intern-metrics-log-stream',
@@ -54,7 +55,6 @@ export class LogService {
   }
 
   metric(obj: object) {
-    this.sillyLogger.info(obj);
     this.metricLogger.info(obj);
   }
 
@@ -63,17 +63,14 @@ export class LogService {
   }
 
   info(info: string) {
-    this.sillyLogger.info(info);
     this.cloudWatchLogger.info(info);
   }
 
   warn(warn: string) {
-    this.sillyLogger.warn(warn);
     this.cloudWatchLogger.warn(warn);
   }
 
   error(message: string, error?: Error, context?: object) {
-    this.sillyLogger.error(message, { error, context });
     this.cloudWatchLogger.error(message, { error, context });
   }
 }
