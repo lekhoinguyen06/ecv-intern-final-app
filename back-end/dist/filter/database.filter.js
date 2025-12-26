@@ -18,7 +18,7 @@ let DatabaseExceptionFilter = class DatabaseExceptionFilter {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse();
         const request = ctx.getRequest();
-        const status = 500;
+        const status = response.statusCode;
         const pgErrorCode = exception.driverError?.['code'] ?? '';
         const res = {
             status: 'error',

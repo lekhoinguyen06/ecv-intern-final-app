@@ -10,7 +10,7 @@ export class DatabaseExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
-    const status = 500;
+    const status = response.statusCode;
     const pgErrorCode = (exception.driverError?.['code'] as string) ?? '';
 
     // Custom error response
