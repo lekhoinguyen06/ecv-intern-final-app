@@ -26,33 +26,17 @@ let UserService = class UserService {
         this.logService = logService;
     }
     async create(user) {
-        try {
-            const userEntity = this.usersRepository.create(user);
-            const savedUser = await this.usersRepository.save(userEntity);
-            this.logService.info(`Created user with email: ${savedUser.id}`);
-        }
-        catch (error) {
-            if (error instanceof typeorm_2.QueryFailedError) {
-                throw new common_1.BadRequestException('Error when creating user: ' + error.message);
-            }
-            throw error;
-        }
+        const userEntity = this.usersRepository.create(user);
+        const savedUser = await this.usersRepository.save(userEntity);
+        this.logService.info(`Created user with email: ${savedUser.id}`);
     }
     async findOne(email) {
-        try {
-            const existingUser = await this.usersRepository.findOneBy({ email });
-            if (existingUser) {
-                return existingUser;
-            }
-            else {
-                throw new common_1.BadRequestException(`Error when finding user: user with email ${email} does not exist`);
-            }
+        const existingUser = await this.usersRepository.findOneBy({ email });
+        if (existingUser) {
+            return existingUser;
         }
-        catch (error) {
-            if (error instanceof typeorm_2.QueryFailedError) {
-                throw new common_1.BadRequestException('Error when finding user: ' + error.message);
-            }
-            throw error;
+        else {
+            throw new common_1.NotFoundException('Cannot find user');
         }
     }
 };
