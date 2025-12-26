@@ -20,11 +20,15 @@ let DatabaseExceptionFilter = class DatabaseExceptionFilter {
         const response = ctx.getResponse();
         const pgError = (0, pgErrorMapper_1.default)(exception.driverError?.['code'] ?? '');
         const errorDetail = {
-            code: pgError.code,
-            name: pgError.name,
-            message: exception.message,
-            timestamp: new Date().toISOString(),
-            path: request.url,
+            status: 'error',
+            statusCode: pgError.httpStatus,
+            error: {
+                code: pgError.code,
+                name: pgError.name,
+                message: exception.message,
+                timestamp: new Date().toISOString(),
+                path: request.url,
+            },
         };
         response.status(pgError.httpStatus).json(errorDetail);
     }
