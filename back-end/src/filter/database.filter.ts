@@ -11,15 +11,17 @@ export class DatabaseExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
     const status = response.statusCode;
-    const pgErrorCode = (exception.driverError?.['code'] as string) ?? '';
+    const pgError = pgErrorMapper(
+      (exception.driverError?.['code'] as string) ?? '',
+    );
 
     // Custom error response
     const res: ErrorResponseDTO = {
       status: 'error',
-      statusCode: status,
+      statusCode: pgError.httpStatus,
       error: {
-        code: pgErrorCode,
-        name: pgErrorMapper(pgErrorCode),
+        code: pgError.code,
+        name: pgError.name,
         message: exception.message,
         timestamp: new Date().toISOString(),
         path: request.url,
