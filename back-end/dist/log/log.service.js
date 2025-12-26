@@ -55,6 +55,7 @@ let LogService = class LogService {
     constructor() {
         this.consoleLogger = winston.createLogger({
             format: winston.format.combine(winston.format.timestamp(), winston.format.errors(), winston.format.colorize(), winston.format.simple()),
+            transports: [new winston.transports.Console()],
         });
         this.cloudWatchLogger = winston.createLogger({
             format: winston.format.combine(winston.format.timestamp(), winston.format.errors(), winston.format.colorize(), winston.format.simple()),
