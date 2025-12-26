@@ -23,16 +23,18 @@ let HTTPExceptionFilter = class HTTPExceptionFilter {
         const request = ctx.getRequest();
         const status = exception.getStatus();
         this.logService.error(exception.message, exception);
-        response.status(status).json({
+        const res = {
             status: 'error',
             statusCode: status,
             error: {
-                code: exception.name,
+                code: status,
+                name: exception.name,
                 message: exception.message,
                 timestamp: new Date().toISOString(),
                 path: request.url,
             },
-        });
+        };
+        response.status(status).json(res);
     }
 };
 exports.HTTPExceptionFilter = HTTPExceptionFilter;
