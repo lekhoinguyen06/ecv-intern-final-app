@@ -13,6 +13,8 @@ async function bootstrap() {
     new HTTPExceptionFilter(logService),
   );
 
+  logService.silly('🚀 Application starting...');
   await app.listen(process.env.PORT ?? 3000);
+  logService.silly('✅ Application is running on port 3000');
 }
 void bootstrap();
