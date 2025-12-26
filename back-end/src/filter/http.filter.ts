@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { LogService } from 'src/log/log.service';
+import { ErrorResponseDTO } from 'src/dtos/res.dto';
 
 @Catch(HttpException)
 @Injectable()
@@ -21,16 +22,19 @@ export class HTTPExceptionFilter implements ExceptionFilter {
     // Logging
     this.logService.error(exception.message, exception);
 
-    // Custom error response
-    response.status(status).json({
+    const res: ErrorResponseDTO = {
       status: 'error',
       statusCode: status,
       error: {
-        code: exception.name,
+        code: status,
+        name: exception.name,
         message: exception.message,
         timestamp: new Date().toISOString(),
         path: request.url,
       },
-    });
+    };
+
+    // Custom error response
+    response.status(status).json(res);
   }
 }
