@@ -10,7 +10,6 @@ export class DatabaseExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
-    const status = response.statusCode;
     const pgError = pgErrorMapper(
       (exception.driverError?.['code'] as string) ?? '',
     );
@@ -27,6 +26,6 @@ export class DatabaseExceptionFilter implements ExceptionFilter {
         path: request.url,
       },
     };
-    response.status(status).json(res);
+    response.status(pgError.httpStatus).json(res);
   }
 }
