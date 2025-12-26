@@ -7,6 +7,5 @@ export declare class LogService {
     silly(silly: string): void;
     info(info: string): void;
     warn(warn: string): void;
-    crit(crit: string): void;
     error(message: string, error?: Error, context?: object): void;
 }

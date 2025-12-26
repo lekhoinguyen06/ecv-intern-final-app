@@ -10,18 +10,22 @@ export class LogService {
 
   constructor() {
     this.consoleLogger = winston.createLogger({
+      level: 'info',
       format: winston.format.combine(
         winston.format.timestamp(),
-        winston.format.errors(),
+        winston.format.errors({ stack: true }),
         winston.format.colorize(),
+        winston.format.simple(),
       ),
       transports: [new winston.transports.Console()],
     });
+
     this.cloudWatchLogger = winston.createLogger({
+      level: 'info',
       format: winston.format.combine(
         winston.format.timestamp(),
-        winston.format.errors(),
-        winston.format.colorize(),
+        winston.format.errors({ stack: true }),
+        winston.format.json(),
       ),
       transports: [
         new winston.transports.Console(),
@@ -32,11 +36,12 @@ export class LogService {
         }),
       ],
     });
+
     this.metricLogger = winston.createLogger({
+      level: 'info',
       format: winston.format.combine(
         winston.format.timestamp(),
-        winston.format.errors(),
-        winston.format.colorize(),
+        winston.format.errors({ stack: true }),
         winston.format.json(),
       ),
       transports: [
@@ -64,10 +69,6 @@ export class LogService {
 
   warn(warn: string) {
     this.cloudWatchLogger.warn(warn);
-  }
-
-  crit(crit: string) {
-    this.cloudWatchLogger.crit(crit);
   }
 
   error(message: string, error?: Error, context?: object) {

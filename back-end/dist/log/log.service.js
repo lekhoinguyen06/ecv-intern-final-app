@@ -55,11 +55,13 @@ let LogService = class LogService {
     metricLogger;
     constructor() {
         this.consoleLogger = winston.createLogger({
-            format: winston.format.combine(winston.format.timestamp(), winston.format.errors(), winston.format.colorize()),
+            level: 'info',
+            format: winston.format.combine(winston.format.timestamp(), winston.format.errors({ stack: true }), winston.format.colorize(), winston.format.simple()),
             transports: [new winston.transports.Console()],
         });
         this.cloudWatchLogger = winston.createLogger({
-            format: winston.format.combine(winston.format.timestamp(), winston.format.errors(), winston.format.colorize()),
+            level: 'info',
+            format: winston.format.combine(winston.format.timestamp(), winston.format.errors({ stack: true }), winston.format.json()),
             transports: [
                 new winston.transports.Console(),
                 new winston_cloudwatch_1.default({
@@ -70,7 +72,8 @@ let LogService = class LogService {
             ],
         });
         this.metricLogger = winston.createLogger({
-            format: winston.format.combine(winston.format.timestamp(), winston.format.errors(), winston.format.colorize(), winston.format.json()),
+            level: 'info',
+            format: winston.format.combine(winston.format.timestamp(), winston.format.errors({ stack: true }), winston.format.json()),
             transports: [
                 new winston.transports.Console(),
                 new winston_cloudwatch_1.default({
@@ -92,9 +95,6 @@ let LogService = class LogService {
     }
     warn(warn) {
         this.cloudWatchLogger.warn(warn);
-    }
-    crit(crit) {
-        this.cloudWatchLogger.crit(crit);
     }
     error(message, error, context) {
         this.cloudWatchLogger.error(message, { error, context });
