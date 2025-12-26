@@ -4,14 +4,26 @@ import WinstonCloudWatch from 'winston-cloudwatch';
 
 @Injectable()
 export class LogService {
-  private logger: winston.Logger;
+  private consoleLogger: winston.Logger;
+  private cloudWatchLogger: winston.Logger;
 
   constructor() {
-    this.logger = winston.createLogger({
+    this.consoleLogger = winston.createLogger({
       format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.errors(),
-        winston.format.json(),
+        winston.format.colorize(),
+        winston.format.simple(),
+        // winston.format.json(),
+      ),
+    });
+    this.cloudWatchLogger = winston.createLogger({
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.errors(),
+        winston.format.colorize(),
+        winston.format.simple(),
+        // winston.format.json(),
       ),
       transports: [
         new winston.transports.Console(),
@@ -25,14 +37,14 @@ export class LogService {
   }
 
   info(info: string) {
-    this.logger.info(info);
+    this.consoleLogger.info(info);
   }
 
   warn(warn: string) {
-    this.logger.warn(warn);
+    this.consoleLogger.warn(warn);
   }
 
   error(message: string, error?: Error, context?: object) {
-    this.logger.error(message, { error, context });
+    this.cloudWatchLogger.error(message, { error, context });
   }
 }

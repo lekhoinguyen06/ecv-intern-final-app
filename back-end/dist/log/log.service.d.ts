@@ -1,5 +1,6 @@
 export declare class LogService {
-    private logger;
+    private consoleLogger;
+    private cloudWatchLogger;
     constructor();
     info(info: string): void;
     warn(warn: string): void;

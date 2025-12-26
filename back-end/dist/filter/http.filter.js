@@ -9,10 +9,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GlobalExceptionFilter = void 0;
+exports.HTTPExceptionFilter = void 0;
 const common_1 = require("@nestjs/common");
 const log_service_1 = require("../log/log.service");
-let GlobalExceptionFilter = class GlobalExceptionFilter {
+let HTTPExceptionFilter = class HTTPExceptionFilter {
     logService;
     constructor(logService) {
         this.logService = logService;
@@ -24,17 +24,21 @@ let GlobalExceptionFilter = class GlobalExceptionFilter {
         const status = exception.getStatus();
         this.logService.error(exception.message, exception);
         response.status(status).json({
+            status: 'error',
             statusCode: status,
-            timestamp: new Date().toISOString(),
-            path: request.url,
-            message: exception.message,
+            error: {
+                code: exception.name,
+                message: exception.message,
+                timestamp: new Date().toISOString(),
+                path: request.url,
+            },
         });
     }
 };
-exports.GlobalExceptionFilter = GlobalExceptionFilter;
-exports.GlobalExceptionFilter = GlobalExceptionFilter = __decorate([
+exports.HTTPExceptionFilter = HTTPExceptionFilter;
+exports.HTTPExceptionFilter = HTTPExceptionFilter = __decorate([
     (0, common_1.Catch)(common_1.HttpException),
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [log_service_1.LogService])
-], GlobalExceptionFilter);
-//# sourceMappingURL=everything.filter.js.map
+], HTTPExceptionFilter);
+//# sourceMappingURL=http.filter.js.map

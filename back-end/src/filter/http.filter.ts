@@ -10,7 +10,7 @@ import { LogService } from 'src/log/log.service';
 
 @Catch(HttpException)
 @Injectable()
-export class GlobalExceptionFilter implements ExceptionFilter {
+export class HTTPExceptionFilter implements ExceptionFilter {
   constructor(private logService: LogService) {}
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -21,16 +21,16 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     // Logging
     this.logService.error(exception.message, exception);
 
-    // Conditional logging here (with exception.cause.expected === ""), no logging
-
-    // Error rate metric here
-
     // Custom error response
     response.status(status).json({
+      status: 'error',
       statusCode: status,
-      timestamp: new Date().toISOString(),
-      path: request.url,
-      message: exception.message,
+      error: {
+        code: exception.name,
+        message: exception.message,
+        timestamp: new Date().toISOString(),
+        path: request.url,
+      },
     });
   }
 }
