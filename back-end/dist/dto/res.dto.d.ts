@@ -1,4 +1,4 @@
-type ErrorObj = {
+export type ErrorObj = {
     code: number | string;
     name: string;
     message: string;
@@ -15,4 +15,3 @@ export type SuccessResponseDTO<T> = {
     statusCode: number;
     data: T;
 };
-export {};

@@ -4,6 +4,7 @@ import { LogService } from './log/log.service';
 import { HTTPExceptionFilter } from './filter/http.filter';
 import { DatabaseExceptionFilter } from './filter/database.filter';
 import { SuccessResponseTransformInterceptor } from './intercept/response.intercept';
+import { AllExceptionsFilter } from './filter/fallback.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,6 +14,7 @@ async function bootstrap() {
   app.useGlobalFilters(
     new DatabaseExceptionFilter(),
     new HTTPExceptionFilter(logService),
+    new AllExceptionsFilter(logService),
   );
 
   logService.silly('🚀 Application starting...');

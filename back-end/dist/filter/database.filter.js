@@ -16,21 +16,16 @@ const pgErrorMapper_1 = __importDefault(require("./pgErrorMapper"));
 let DatabaseExceptionFilter = class DatabaseExceptionFilter {
     catch(exception, host) {
         const ctx = host.switchToHttp();
-        const response = ctx.getResponse();
         const request = ctx.getRequest();
         const pgError = (0, pgErrorMapper_1.default)(exception.driverError?.['code'] ?? '');
-        const res = {
-            status: 'error',
-            statusCode: pgError.httpStatus,
-            error: {
-                code: pgError.code,
-                name: pgError.name,
-                message: exception.message,
-                timestamp: new Date().toISOString(),
-                path: request.url,
-            },
+        const errorDetail = {
+            code: pgError.code,
+            name: pgError.name,
+            message: exception.message,
+            timestamp: new Date().toISOString(),
+            path: request.url,
         };
-        response.status(pgError.httpStatus).json(res);
+        throw new common_1.HttpException(errorDetail, pgError.httpStatus);
     }
 };
 exports.DatabaseExceptionFilter = DatabaseExceptionFilter;

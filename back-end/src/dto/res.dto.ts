@@ -1,4 +1,4 @@
-type ErrorObj = {
+export type ErrorObj = {
   code: number | string;
   name: string;
   message: string;
