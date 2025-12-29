@@ -32,6 +32,21 @@ export class UserService {
   // Check email
 
   // Update
-
+  async update(user: UpdateUserDto): Promise<void> {
+    const existingUser = await this.findOne(user.email);
+    if (!existingUser) {
+        throw new NotFoundException(`User with email ${user.email} not found`);
+    }
+    await this.usersRepository.update(existingUser.id, user);
+    this.logService.info(`Updated user: ${user.email}`);
+  }
   // Delete.
+  async remove(user: DeleteUserDto): Promise<void> {
+    const existingUser = await this.findOne(user.email);
+    if (!existingUser) {
+      throw new NotFoundException(`User with email ${user.email} not found`);
+    }
+    await this.usersRepository.delete(existingUser.id);
+    this.logService.info(`Deleted user: ${user.email}`);
+  }
 }
