@@ -1,12 +1,11 @@
 import { User } from './interfaces/user.interface';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/user.dto';
-import { LoggingService } from 'src/logger/logger.service';
+import { LogService } from 'src/log/log.service';
 export declare class UserService {
     private usersRepository;
-    private loggingService;
-    constructor(usersRepository: Repository<User>, loggingService: LoggingService);
-    private readonly users;
+    private logService;
+    constructor(usersRepository: Repository<User>, logService: LogService);
     create(user: CreateUserDto): Promise<void>;
-    findOne(email: string): Promise<User | null>;
+    findOne(email: string): Promise<User | undefined>;
 }

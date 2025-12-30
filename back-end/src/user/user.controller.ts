@@ -28,7 +28,7 @@ export class UserController {
 
   // GET /users
   @Get()
-  findOne(@Body('email') email: string): Promise<User | null> {
+  findOne(@Body('email') email: string): Promise<User | undefined> {
     return this.userService.findOne(email);
   }
 

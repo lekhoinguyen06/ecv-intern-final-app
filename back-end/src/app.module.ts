@@ -3,8 +3,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { User } from './user/entity/user.entity';
-import { LoggerModule } from './logger/logger.module';
+import { User as UserEntity } from './user/entity/user.entity';
+import { LogModule } from './log/log.module';
 import { SecretModule } from './secret/secret.module';
 import { SecretManagerService } from './secret/secret.service';
 import { ConfigModule } from '@nestjs/config';
@@ -14,21 +14,24 @@ import { join } from 'path';
 async function setupDBCredentials(secretManager: SecretManagerService) {
   interface DBSecret {
     username: string;
+    host: string;
+    port: string;
     password: string;
   }
   const dbSecret: DBSecret = await secretManager.load(
-    process.env.SECRET_NAME ?? 'rds!db-a92b39b1-e81e-4780-999b-87d7c95ad8c8',
+    process.env.SECRET_NAME ?? 'ecv-intern',
   );
   return {
     type: 'postgres',
     host:
-      process.env.DB_HOST ??
+      dbSecret?.host ||
+      process.env.DB_HOST ||
       'ecv-intern-rds.cpw4gissg1ma.ap-southeast-1.rds.amazonaws.com',
-    port: process.env.DB_PORT ?? 5432,
-    username: dbSecret?.username || process.env.DB_USERNAME || 'postgres',
+    port: parseInt(dbSecret?.port) || process.env.DB_PORT || 5432,
+    username: process.env.DB_USERNAME || 'postgres',
     password: dbSecret.password,
     database: process.env.DB_DATABASE ?? 'postgres',
-    entities: [User],
+    entities: [UserEntity],
     synchronize: true, // Sync with database (turn off for productions - otherwise you can lose production data)
     ssl: true,
     extra: {
@@ -46,7 +49,7 @@ async function setupDBCredentials(secretManager: SecretManagerService) {
       exclude: ['/api', '/health'],
     }),
     UserModule,
-    LoggerModule,
+    LogModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),

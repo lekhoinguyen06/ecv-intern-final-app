@@ -45,14 +45,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LoggingService = void 0;
+exports.LogService = void 0;
 const common_1 = require("@nestjs/common");
 const winston = __importStar(require("winston"));
 const winston_cloudwatch_1 = __importDefault(require("winston-cloudwatch"));
-let LoggingService = class LoggingService {
-    logger;
+let LogService = class LogService {
+    sillyLogger;
+    cloudWatchLogger;
+    metricLogger;
     constructor() {
-        this.logger = winston.createLogger({
+        this.sillyLogger = winston.createLogger({
+            level: 'silly',
+            format: winston.format.combine(winston.format.timestamp(), winston.format.colorize(), winston.format.simple()),
+            transports: [new winston.transports.Console()],
+        });
+        this.cloudWatchLogger = winston.createLogger({
+            level: 'info',
+            format: winston.format.combine(winston.format.timestamp(), winston.format.errors({ stack: true }), winston.format.json()),
             transports: [
                 new winston.transports.Console(),
                 new winston_cloudwatch_1.default({
@@ -62,20 +71,38 @@ let LoggingService = class LoggingService {
                 }),
             ],
         });
+        this.metricLogger = winston.createLogger({
+            level: 'info',
+            format: winston.format.combine(winston.format.timestamp(), winston.format.errors({ stack: true }), winston.format.json()),
+            transports: [
+                new winston.transports.Console(),
+                new winston_cloudwatch_1.default({
+                    logGroupName: 'ecv-intern-metrics-log-group',
+                    logStreamName: 'ecv-intern-metrics-log-stream',
+                    awsRegion: 'ap-southeast-1',
+                }),
+            ],
+        });
+    }
+    metric(obj) {
+        this.metricLogger.info(obj);
+    }
+    silly(silly) {
+        this.sillyLogger.silly(silly);
     }
     info(info) {
-        this.logger.info(info);
+        this.cloudWatchLogger.info(info);
     }
     warn(warn) {
-        this.logger.warn(warn);
+        this.cloudWatchLogger.warn(warn);
     }
-    error(error) {
-        this.logger.error(error);
+    error(message, error, context) {
+        this.cloudWatchLogger.error(message, { error, context });
     }
 };
-exports.LoggingService = LoggingService;
-exports.LoggingService = LoggingService = __decorate([
-    (0, common_1.Injectable)({ scope: common_1.Scope.TRANSIENT }),
+exports.LogService = LogService;
+exports.LogService = LogService = __decorate([
+    (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [])
-], LoggingService);
-//# sourceMappingURL=logger.service.js.map
+], LogService);
+//# sourceMappingURL=log.service.js.map

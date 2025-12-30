@@ -17,43 +17,26 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const user_entity_1 = require("./entity/user.entity");
-const logger_service_1 = require("../logger/logger.service");
+const log_service_1 = require("../log/log.service");
 let UserService = class UserService {
     usersRepository;
-    loggingService;
-    constructor(usersRepository, loggingService) {
+    logService;
+    constructor(usersRepository, logService) {
         this.usersRepository = usersRepository;
-        this.loggingService = loggingService;
+        this.logService = logService;
     }
-    users = [];
     async create(user) {
-        try {
-            const userEntity = this.usersRepository.create(user);
-            const savedUser = await this.usersRepository.save(userEntity);
-            this.loggingService.info(`Created user with email: ${savedUser.id}`);
-        }
-        catch (error) {
-            this.loggingService.error('Error when creating a user' + error);
-            throw error;
-        }
+        const userEntity = this.usersRepository.create(user);
+        const savedUser = await this.usersRepository.save(userEntity);
+        this.logService.info(`Created user with email: ${savedUser.id}`);
     }
     async findOne(email) {
-        try {
-            const existingUser = await this.usersRepository.findOneBy({ email });
-            this.loggingService.info('Found a user with email' + email);
-            if (existingUser) {
-                return existingUser;
-            }
-            else {
-                throw new common_1.BadRequestException(`Error when finding user: user with email ${email} does not exist`);
-            }
+        const existingUser = await this.usersRepository.findOneBy({ email });
+        if (existingUser) {
+            return existingUser;
         }
-        catch (error) {
-            this.loggingService.error('Error when creating a user' + error);
-            if (error instanceof common_1.BadRequestException) {
-                throw error;
-            }
-            throw new common_1.InternalServerErrorException('Failed to find user');
+        else {
+            throw new common_1.NotFoundException('Cannot find user');
         }
     }
 };
@@ -62,6 +45,6 @@ exports.UserService = UserService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
-        logger_service_1.LoggingService])
+        log_service_1.LogService])
 ], UserService);
 //# sourceMappingURL=user.service.js.map

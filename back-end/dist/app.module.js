@@ -13,20 +13,21 @@ const app_service_1 = require("./app.service");
 const user_module_1 = require("./user/user.module");
 const typeorm_1 = require("@nestjs/typeorm");
 const user_entity_1 = require("./user/entity/user.entity");
-const logger_module_1 = require("./logger/logger.module");
+const log_module_1 = require("./log/log.module");
 const secret_module_1 = require("./secret/secret.module");
 const secret_service_1 = require("./secret/secret.service");
 const config_1 = require("@nestjs/config");
 const serve_static_1 = require("@nestjs/serve-static");
 const path_1 = require("path");
 async function setupDBCredentials(secretManager) {
-    const dbSecret = await secretManager.load(process.env.SECRET_NAME ?? 'rds!db-a92b39b1-e81e-4780-999b-87d7c95ad8c8');
+    const dbSecret = await secretManager.load(process.env.SECRET_NAME ?? 'ecv-intern');
     return {
         type: 'postgres',
-        host: process.env.DB_HOST ??
+        host: dbSecret?.host ||
+            process.env.DB_HOST ||
             'ecv-intern-rds.cpw4gissg1ma.ap-southeast-1.rds.amazonaws.com',
-        port: process.env.DB_PORT ?? 5432,
-        username: dbSecret?.username || process.env.DB_USERNAME || 'postgres',
+        port: parseInt(dbSecret?.port) || process.env.DB_PORT || 5432,
+        username: process.env.DB_USERNAME || 'postgres',
         password: dbSecret.password,
         database: process.env.DB_DATABASE ?? 'postgres',
         entities: [user_entity_1.User],
@@ -50,7 +51,7 @@ exports.AppModule = AppModule = __decorate([
                 exclude: ['/api', '/health'],
             }),
             user_module_1.UserModule,
-            logger_module_1.LoggerModule,
+            log_module_1.LogModule,
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
             }),

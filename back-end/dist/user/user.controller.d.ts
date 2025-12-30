@@ -5,7 +5,7 @@ export declare class UserController {
     private userService;
     constructor(userService: UserService);
     create(createUserDto: CreateUserDto): Promise<void>;
-    findOne(email: string): Promise<User | null>;
+    findOne(email: string): Promise<User | undefined>;
     update(updateUsersDto: UpdateUserDto): string;
     remove(email: string): string;
 }
