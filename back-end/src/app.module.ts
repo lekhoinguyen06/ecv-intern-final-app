@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { User } from './user/entity/user.entity';
+import { User as UserEntity } from './user/entity/user.entity';
 import { LogModule } from './log/log.module';
 import { SecretModule } from './secret/secret.module';
 import { SecretManagerService } from './secret/secret.service';
@@ -31,7 +31,7 @@ async function setupDBCredentials(secretManager: SecretManagerService) {
     username: process.env.DB_USERNAME || 'postgres',
     password: dbSecret.password,
     database: process.env.DB_DATABASE ?? 'postgres',
-    entities: [User],
+    entities: [UserEntity],
     synchronize: true, // Sync with database (turn off for productions - otherwise you can lose production data)
     ssl: true,
     extra: {
