@@ -14,6 +14,8 @@ import { join } from 'path';
 async function setupDBCredentials(secretManager: SecretManagerService) {
   interface DBSecret {
     username: string;
+    host: string;
+    port: string;
     password: string;
   }
   const dbSecret: DBSecret = await secretManager.load(
@@ -22,10 +24,11 @@ async function setupDBCredentials(secretManager: SecretManagerService) {
   return {
     type: 'postgres',
     host:
-      process.env.DB_HOST ??
+      dbSecret?.host ||
+      process.env.DB_HOST ||
       'ecv-intern-rds.cpw4gissg1ma.ap-southeast-1.rds.amazonaws.com',
-    port: process.env.DB_PORT ?? 5432,
-    username: dbSecret?.username || process.env.DB_USERNAME || 'postgres',
+    port: parseInt(dbSecret?.port) || process.env.DB_PORT || 5432,
+    username: process.env.DB_USERNAME || 'postgres',
     password: dbSecret.password,
     database: process.env.DB_DATABASE ?? 'postgres',
     entities: [User],

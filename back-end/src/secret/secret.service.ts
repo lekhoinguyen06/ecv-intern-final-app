@@ -13,22 +13,18 @@ export class SecretManagerService {
     });
   }
   async load<T>(secretName: string): Promise<T> {
+    const command = new GetSecretValueCommand({ SecretId: secretName });
+    const response = await this.client.send(command);
+
+    if (!response.SecretString) {
+      throw new Error(`No secret found for ${secretName}`);
+    }
+
+    // Fallback to string
     try {
-      const command = new GetSecretValueCommand({ SecretId: secretName });
-      const response = await this.client.send(command);
-
-      if (!response.SecretString) {
-        throw new Error(`No secret found for ${secretName}`);
-      }
-
-      // Fallback to string
-      try {
-        return JSON.parse(response.SecretString) as T;
-      } catch {
-        return response.SecretString as T;
-      }
-    } catch (error) {
-      throw new Error(`Failed to load secret ${secretName}: ${error}`);
+      return JSON.parse(response.SecretString) as T;
+    } catch {
+      return response.SecretString as T;
     }
   }
 }

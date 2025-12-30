@@ -23,10 +23,11 @@ async function setupDBCredentials(secretManager) {
     const dbSecret = await secretManager.load(process.env.SECRET_NAME ?? 'intern');
     return {
         type: 'postgres',
-        host: process.env.DB_HOST ??
+        host: dbSecret?.host ||
+            process.env.DB_HOST ||
             'ecv-intern-rds.cpw4gissg1ma.ap-southeast-1.rds.amazonaws.com',
-        port: process.env.DB_PORT ?? 5432,
-        username: dbSecret?.username || process.env.DB_USERNAME || 'postgres',
+        port: parseInt(dbSecret?.port) || process.env.DB_PORT || 5432,
+        username: process.env.DB_USERNAME || 'postgres',
         password: dbSecret.password,
         database: process.env.DB_DATABASE ?? 'postgres',
         entities: [user_entity_1.User],
