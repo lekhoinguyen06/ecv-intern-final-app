@@ -19,7 +19,7 @@ async function setupDBCredentials(secretManager: SecretManagerService) {
     password: string;
   }
   const dbSecret: DBSecret = await secretManager.load(
-    process.env.SECRET_NAME ?? 'intern',
+    process.env.SECRET_NAME ?? 'ecv-intern',
   );
   return {
     type: 'postgres',

@@ -20,16 +20,21 @@ let SecretManagerService = class SecretManagerService {
         });
     }
     async load(secretName) {
-        const command = new client_secrets_manager_1.GetSecretValueCommand({ SecretId: secretName });
-        const response = await this.client.send(command);
-        if (!response.SecretString) {
-            throw new Error(`No secret found for ${secretName}`);
-        }
         try {
-            return JSON.parse(response.SecretString);
+            const command = new client_secrets_manager_1.GetSecretValueCommand({ SecretId: secretName });
+            const response = await this.client.send(command);
+            if (!response.SecretString) {
+                throw new Error(`No secret found for ${secretName}`);
+            }
+            try {
+                return JSON.parse(response.SecretString);
+            }
+            catch {
+                return response.SecretString;
+            }
         }
-        catch {
-            return response.SecretString;
+        catch (error) {
+            throw new Error(`Failed to load secret ${secretName}: ${error}`);
         }
     }
 };
