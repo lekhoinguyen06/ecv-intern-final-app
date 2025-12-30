@@ -20,7 +20,7 @@ const config_1 = require("@nestjs/config");
 const serve_static_1 = require("@nestjs/serve-static");
 const path_1 = require("path");
 async function setupDBCredentials(secretManager) {
-    const dbSecret = await secretManager.load(process.env.SECRET_NAME ?? 'rds!db-a92b39b1-e81e-4780-999b-87d7c95ad8c8');
+    const dbSecret = await secretManager.load(process.env.SECRET_NAME ?? 'intern');
     return {
         type: 'postgres',
         host: process.env.DB_HOST ??

@@ -17,7 +17,7 @@ async function setupDBCredentials(secretManager: SecretManagerService) {
     password: string;
   }
   const dbSecret: DBSecret = await secretManager.load(
-    process.env.SECRET_NAME ?? 'rds!db-a92b39b1-e81e-4780-999b-87d7c95ad8c8',
+    process.env.SECRET_NAME ?? 'intern',
   );
   return {
     type: 'postgres',
