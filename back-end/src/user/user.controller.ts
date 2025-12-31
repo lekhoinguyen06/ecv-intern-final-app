@@ -40,7 +40,8 @@ export class UserController {
 
   // DELETE /users
   @Delete()
-  remove(@Body('email') email: string) {
-    return `This action removes a #${email} user`;
-  }
+  @UsePipes(new ZodValidationPipe(DeleteUserSchema))
+  remove(@Body() deleteUserDto: DeleteUserDto): Promise<void> {
+    return this.userService.remove(deleteUserDto);
+  }}
 }
