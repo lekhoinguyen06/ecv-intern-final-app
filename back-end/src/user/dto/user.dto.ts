@@ -17,6 +17,8 @@ export const UserObjectSchema = z
 
 export const CreateUserSchema = UserObjectSchema;
 export const UpdateUserSchema = UserObjectSchema;
+export const DeleteUserSchema = UserObjectSchema;
 
 export type CreateUserDto = z.infer<typeof UserObjectSchema>;
 export type UpdateUserDto = z.infer<typeof UserObjectSchema>;
+export type DeleteUserDto = z.infer<typeof DeleteUserSchema>;
