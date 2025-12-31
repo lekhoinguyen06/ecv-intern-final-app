@@ -29,10 +29,10 @@ let UserController = class UserController {
         return this.userService.findOne(email);
     }
     update(updateUsersDto) {
-        return `This action updates a #${updateUsersDto.email} user ${JSON.stringify(updateUsersDto)}`;
+        return this.userService.update(updateUsersDto);
     }
-    remove(deleteUserDto) {
-        return this.userService.remove(deleteUserDto);
+    remove(email) {
+        return this.userService.remove(email);
     }
 };
 exports.UserController = UserController;
@@ -53,6 +53,7 @@ __decorate([
 ], UserController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Put)(),
+    (0, common_1.UsePipes)(new zod_pipe_1.ZodValidationPipe(user_dto_1.UpdateUserSchema)),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -60,10 +61,9 @@ __decorate([
 ], UserController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(),
-    (0, common_1.UsePipes)(new zod_pipe_1.ZodValidationPipe(user_dto_1.DeleteUserSchema)),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Body)('email')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "remove", null);
 exports.UserController = UserController = __decorate([

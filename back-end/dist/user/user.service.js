@@ -44,12 +44,12 @@ let UserService = class UserService {
         await this.usersRepository.update(existingUser.id, user);
         this.logService.info(`Updated user with email: ${user.email}`);
     }
-    async remove(user) {
-        const existingUser = await this.findOne(user.email);
+    async remove(email) {
+        const existingUser = await this.findOne(email);
         if (!existingUser)
-            throw new common_1.NotFoundException(`Cannot find user with email: ${user.email}`);
-        await this.usersRepository.delete(existingUser.id);
-        this.logService.info(`Deleted user with email: ${user.email}`);
+            throw new common_1.NotFoundException(`Cannot find user with email: ${email}`);
+        await this.usersRepository.delete({ email });
+        this.logService.info(`Deleted user with email: ${email}`);
     }
 };
 exports.UserService = UserService;

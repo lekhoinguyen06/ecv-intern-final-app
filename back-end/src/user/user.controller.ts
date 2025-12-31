@@ -10,10 +10,9 @@ import {
 import { UserService } from './user.service';
 import {
   CreateUserSchema,
-  DeleteUserSchema,
+  UpdateUserSchema,
   type CreateUserDto,
   type UpdateUserDto,
-  type DeleteUserDto,
 } from './dto/user.dto';
 import { User } from './interfaces/user.interface';
 import { ZodValidationPipe } from 'src/pipe/zod.pipe';
@@ -36,14 +35,14 @@ export class UserController {
 
   // PUT /users
   @Put()
+  @UsePipes(new ZodValidationPipe(UpdateUserSchema))
   update(@Body() updateUsersDto: UpdateUserDto) {
-    return `This action updates a #${updateUsersDto.email} user ${JSON.stringify(updateUsersDto)}`;
+    return this.userService.update(updateUsersDto);
   }
 
   // DELETE /users
   @Delete()
-  @UsePipes(new ZodValidationPipe(DeleteUserSchema))
-  remove(@Body() deleteUserDto: DeleteUserDto): Promise<void> {
-    return this.userService.remove(deleteUserDto);
+  remove(@Body('email') email: string): Promise<void> {
+    return this.userService.remove(email);
   }
 }
