@@ -11,7 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
 const common_1 = require("@nestjs/common");
@@ -61,10 +60,10 @@ __decorate([
 ], UserController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(),
-    (0, common_1.UsePipes)(new zod_pipe_1.ZodValidationPipe(DeleteUserSchema)),
+    (0, common_1.UsePipes)(new zod_pipe_1.ZodValidationPipe(user_dto_1.DeleteUserSchema)),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_a = typeof DeleteUserDto !== "undefined" && DeleteUserDto) === "function" ? _a : Object]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "remove", null);
 exports.UserController = UserController = __decorate([

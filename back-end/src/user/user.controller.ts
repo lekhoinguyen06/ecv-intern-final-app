@@ -10,8 +10,10 @@ import {
 import { UserService } from './user.service';
 import {
   CreateUserSchema,
+  DeleteUserSchema,
   type CreateUserDto,
   type UpdateUserDto,
+  type DeleteUserDto,
 } from './dto/user.dto';
 import { User } from './interfaces/user.interface';
 import { ZodValidationPipe } from 'src/pipe/zod.pipe';
@@ -43,5 +45,5 @@ export class UserController {
   @UsePipes(new ZodValidationPipe(DeleteUserSchema))
   remove(@Body() deleteUserDto: DeleteUserDto): Promise<void> {
     return this.userService.remove(deleteUserDto);
-  }}
+  }
 }
