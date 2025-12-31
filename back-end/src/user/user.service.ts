@@ -32,6 +32,15 @@ export class UserService {
   // Check email
 
   // Update
-
+  async update(user: UpdateUserDto): Promise<void> {
+    const existingUser = await this.findOne(user.email);
+    await this.usersRepository.update(existingUser.id, user);
+    this.logService.info(`Updated user with email: ${user.email}`);
+  }
   // Delete.
+  async remove(user: DeleteUserDto): Promise<void> {
+    const existingUser = await this.findOne(user.email);
+    await this.usersRepository.delete(existingUser.id);
+    this.logService.info(`Deleted user with email: ${user.email}`);
+  }
 }
