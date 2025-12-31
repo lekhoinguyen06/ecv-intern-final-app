@@ -29,8 +29,6 @@ let HTTPExceptionFilter = class HTTPExceptionFilter {
             timestamp: new Date().toISOString(),
             path: request.url,
         };
-        console.log('Error from HTTP fiter: ' + JSON.stringify(errorDetails));
-        this.logService.silly('Error from HTTP fiter: ' + JSON.stringify(errorDetails));
         this.logService.error(exception.message, exception);
         const res = {
             status: 'error',

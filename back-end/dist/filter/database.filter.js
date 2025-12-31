@@ -34,8 +34,6 @@ let DatabaseExceptionFilter = class DatabaseExceptionFilter {
             timestamp: new Date().toISOString(),
             path: request.url,
         };
-        console.log('Error from DB fiter: ' + JSON.stringify(errorDetails));
-        this.logService.silly('Error from DB fiter: ' + JSON.stringify(errorDetails));
         const res = {
             status: 'error',
             statusCode: pgError.httpStatus,
