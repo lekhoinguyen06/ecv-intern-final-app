@@ -7,5 +7,5 @@ export declare class UserController {
     create(createUserDto: CreateUserDto): Promise<void>;
     findOne(email: string): Promise<User | undefined>;
     update(updateUsersDto: UpdateUserDto): string;
-    remove(email: string): string;
+    remove(deleteUserDto: DeleteUserDto): Promise<void>;
 }

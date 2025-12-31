@@ -8,4 +8,6 @@ export declare class UserService {
     constructor(usersRepository: Repository<User>, logService: LogService);
     create(user: CreateUserDto): Promise<void>;
     findOne(email: string): Promise<User | undefined>;
+    update(user: UpdateUserDto): Promise<void>;
+    remove(user: DeleteUserDto): Promise<void>;
 }

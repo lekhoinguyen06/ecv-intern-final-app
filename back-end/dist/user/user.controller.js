@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
 const common_1 = require("@nestjs/common");
@@ -31,8 +32,8 @@ let UserController = class UserController {
     update(updateUsersDto) {
         return `This action updates a #${updateUsersDto.email} user ${JSON.stringify(updateUsersDto)}`;
     }
-    remove(email) {
-        return `This action removes a #${email} user`;
+    remove(deleteUserDto) {
+        return this.userService.remove(deleteUserDto);
     }
 };
 exports.UserController = UserController;
@@ -60,10 +61,11 @@ __decorate([
 ], UserController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(),
-    __param(0, (0, common_1.Body)('email')),
+    (0, common_1.UsePipes)(new zod_pipe_1.ZodValidationPipe(DeleteUserSchema)),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [typeof (_a = typeof DeleteUserDto !== "undefined" && DeleteUserDto) === "function" ? _a : Object]),
+    __metadata("design:returntype", Promise)
 ], UserController.prototype, "remove", null);
 exports.UserController = UserController = __decorate([
     (0, common_1.Controller)('api/user'),

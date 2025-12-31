@@ -1,4 +1,3 @@
-// Store API call rates, error rates, get pm2 metric
-// Format: .txt & .json
-// Storage: S3
+// Store API call rates
+// Format:  .json
 // Period: daily

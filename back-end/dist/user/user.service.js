@@ -39,6 +39,16 @@ let UserService = class UserService {
             throw new common_1.NotFoundException('Cannot find user');
         }
     }
+    async update(user) {
+        const existingUser = await this.findOne(user.email);
+        await this.usersRepository.update(existingUser.id, user);
+        this.logService.info(`Updated user with email: ${user.email}`);
+    }
+    async remove(user) {
+        const existingUser = await this.findOne(user.email);
+        await this.usersRepository.delete(existingUser.id);
+        this.logService.info(`Deleted user with email: ${user.email}`);
+    }
 };
 exports.UserService = UserService;
 exports.UserService = UserService = __decorate([
