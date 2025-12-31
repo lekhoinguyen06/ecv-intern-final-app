@@ -1,6 +1,6 @@
 import { User } from './interfaces/user.interface';
 import { Repository } from 'typeorm';
-import { CreateUserDto } from './dto/user.dto';
+import { CreateUserDto, UpdateUserDto, DeleteUserDto } from './dto/user.dto';
 import { LogService } from 'src/log/log.service';
 export declare class UserService {
     private usersRepository;

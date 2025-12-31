@@ -3,7 +3,7 @@ import { User } from './interfaces/user.interface';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User as UserEntity } from './entity/user.entity';
-import { CreateUserDto } from './dto/user.dto';
+import { CreateUserDto, UpdateUserDto, DeleteUserDto } from './dto/user.dto';
 import { LogService } from 'src/log/log.service';
 
 @Injectable()
@@ -22,11 +22,10 @@ export class UserService {
 
   async findOne(email: string): Promise<User | undefined> {
     const existingUser = await this.usersRepository.findOneBy({ email });
-    if (existingUser) {
-      return existingUser;
-    } else {
-      throw new NotFoundException('Cannot find user');
-    }
+    if (!existingUser)
+      throw new NotFoundException(`Cannot find user with email: ${email}`);
+    this.logService.info(`Found user with email: ${email}`);
+    return existingUser;
   }
 
   // Check email
@@ -34,12 +33,16 @@ export class UserService {
   // Update
   async update(user: UpdateUserDto): Promise<void> {
     const existingUser = await this.findOne(user.email);
+    if (!existingUser)
+      throw new NotFoundException(`Cannot find user with email: ${user.email}`);
     await this.usersRepository.update(existingUser.id, user);
     this.logService.info(`Updated user with email: ${user.email}`);
   }
   // Delete.
   async remove(user: DeleteUserDto): Promise<void> {
     const existingUser = await this.findOne(user.email);
+    if (!existingUser)
+      throw new NotFoundException(`Cannot find user with email: ${user.email}`);
     await this.usersRepository.delete(existingUser.id);
     this.logService.info(`Deleted user with email: ${user.email}`);
   }
