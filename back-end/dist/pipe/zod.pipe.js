@@ -49,8 +49,8 @@ class ZodValidationPipe {
         catch (error) {
             let message = '';
             if (error instanceof z.ZodError)
-                message = error.message;
-            throw new common_1.BadRequestException('Validation failed:' + message);
+                message = ' ' + z.prettifyError(error);
+            throw new common_1.BadRequestException('Validation failed!' + message);
         }
     }
 }
