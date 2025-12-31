@@ -28,6 +28,8 @@ export class HTTPExceptionFilter implements ExceptionFilter {
       path: request.url,
     };
 
+    console.log(errorDetails);
+
     // Logging (will log expected usage error such as conflicting email)
     this.logService.error(exception.message, exception);
 

@@ -18,21 +18,23 @@ export class DatabaseExceptionFilter implements ExceptionFilter {
     );
 
     // Custom error response
-    const errorDetail: ErrorResponseDTO = {
+    const errorDetail = {
+      code: pgError.code,
+      name: pgError.name,
+      message: exception.message,
+      timestamp: new Date().toISOString(),
+      path: request.url,
+    };
+
+    const res: ErrorResponseDTO = {
       status: 'error',
       statusCode: pgError.httpStatus,
-      error: {
-        code: pgError.code,
-        name: pgError.name,
-        message: exception.message,
-        timestamp: new Date().toISOString(),
-        path: request.url,
-      },
+      error: errorDetail,
     };
 
     // Logging (will log expected usage error such as conflicting email)
     this.logService.error(exception.message, exception);
 
-    response.status(pgError.httpStatus).json(errorDetail);
+    response.status(pgError.httpStatus).json(res);
   }
 }

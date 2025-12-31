@@ -29,6 +29,7 @@ let HTTPExceptionFilter = class HTTPExceptionFilter {
             timestamp: new Date().toISOString(),
             path: request.url,
         };
+        console.log(errorDetails);
         this.logService.error(exception.message, exception);
         const res = {
             status: 'error',
