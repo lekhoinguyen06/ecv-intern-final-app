@@ -18,7 +18,7 @@ export class DatabaseExceptionFilter implements ExceptionFilter {
     );
 
     // Custom error response
-    const errorDetail = {
+    const errorDetails = {
       code: pgError.code,
       name: pgError.name,
       message: exception.message,
@@ -26,10 +26,15 @@ export class DatabaseExceptionFilter implements ExceptionFilter {
       path: request.url,
     };
 
+    console.log('Error from DB fiter: ' + JSON.stringify(errorDetails));
+    this.logService.silly(
+      'Error from DB fiter: ' + JSON.stringify(errorDetails),
+    );
+
     const res: ErrorResponseDTO = {
       status: 'error',
       statusCode: pgError.httpStatus,
-      error: errorDetail,
+      error: errorDetails,
     };
 
     // Logging (will log expected usage error such as conflicting email)

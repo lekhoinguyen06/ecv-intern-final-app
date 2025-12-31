@@ -27,17 +27,19 @@ let DatabaseExceptionFilter = class DatabaseExceptionFilter {
         const request = ctx.getRequest();
         const response = ctx.getResponse();
         const pgError = (0, pgErrorMapper_1.default)(exception.driverError?.['code'] ?? '');
-        const errorDetail = {
+        const errorDetails = {
             code: pgError.code,
             name: pgError.name,
             message: exception.message,
             timestamp: new Date().toISOString(),
             path: request.url,
         };
+        console.log('Error from DB fiter: ' + JSON.stringify(errorDetails));
+        this.logService.silly('Error from DB fiter: ' + JSON.stringify(errorDetails));
         const res = {
             status: 'error',
             statusCode: pgError.httpStatus,
-            error: errorDetail,
+            error: errorDetails,
         };
         this.logService.error(exception.message, exception);
         response.status(pgError.httpStatus).json(res);

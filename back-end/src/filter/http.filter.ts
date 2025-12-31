@@ -28,7 +28,10 @@ export class HTTPExceptionFilter implements ExceptionFilter {
       path: request.url,
     };
 
-    console.log(errorDetails);
+    console.log('Error from HTTP fiter: ' + JSON.stringify(errorDetails));
+    this.logService.silly(
+      'Error from HTTP fiter: ' + JSON.stringify(errorDetails),
+    );
 
     // Logging (will log expected usage error such as conflicting email)
     this.logService.error(exception.message, exception);
