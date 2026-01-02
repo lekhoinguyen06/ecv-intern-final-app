@@ -14,7 +14,11 @@ async function bootstrap() {
     new DatabaseExceptionFilter(logService),
     new HTTPExceptionFilter(logService),
   );
-
+  app.enableCors({
+    origin: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  });
   logService.silly('🚀 Application starting...');
   await app.listen(process.env.PORT ?? 3000);
   logService.silly(
