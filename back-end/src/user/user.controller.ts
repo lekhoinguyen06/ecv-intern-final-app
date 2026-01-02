@@ -5,6 +5,7 @@ import {
   Put,
   Delete,
   Body,
+  Query,
   UsePipes,
 } from '@nestjs/common';
 import { UserService } from './user.service';
@@ -29,7 +30,7 @@ export class UserController {
 
   // GET /users
   @Get()
-  findOne(@Body('email') email: string): Promise<User | undefined> {
+  findOne(@Query('email') email: string): Promise<User | undefined> {
     return this.userService.findOne(email);
   }
 
