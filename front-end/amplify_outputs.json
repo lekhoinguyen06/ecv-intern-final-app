@@ -1,0 +1,11 @@
+{
+  "version": "1",
+  "auth": {
+    "region": "ap-southeast-1",
+    "user_pool_id": "ap-southeast-1_4G7kcguGH",
+    "user_pool_client_id": "5kuv35ke2b3jvggf65rhu52t9e",
+    "login_with": {
+      "username": true
+    }
+  }
+}

@@ -1,10 +1,10 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
+import { signOut } from "aws-amplify/auth" 
 import { Menu, Home, User, Settings, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -18,17 +18,22 @@ const navigation = [
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const pathname = usePathname()
+  const router = useRouter() 
 
-  const handleLogout = () => {
-    // Clear all client-side state
-    localStorage.removeItem("userProfile")
-    // Redirect to signin page
-    window.location.href = "/signin"
+  const handleLogout = async () => {
+    try {
+      await signOut() 
+      
+      localStorage.removeItem("userProfile")
+      
+      router.push("/signin")
+    } catch (error) {
+      console.error("Error signing out:", error)
+    }
   }
 
   return (
     <div className="flex min-h-screen w-full">
-      {/* Desktop Sidebar - Static positioning, part of flex layout */}
       <aside className="hidden w-64 shrink-0 border-r border-border bg-white md:block">
         <div className="flex h-full flex-col">
           <div className="border-b border-border p-6">
@@ -63,7 +68,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
       </aside>
 
-      {/* Mobile Sidebar Overlay - Fixed positioning */}
       {mobileMenuOpen && (
         <>
           <div className="fixed inset-0 z-40 bg-black/50 md:hidden" onClick={() => setMobileMenuOpen(false)} />
@@ -104,9 +108,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         </>
       )}
 
-      {/* Main Content Column */}
       <div className="flex flex-1 flex-col">
-        {/* Header */}
         <header className="flex h-16 items-center gap-4 border-b border-border bg-white px-6">
           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileMenuOpen(true)}>
             <Menu className="h-5 w-5" />
@@ -114,7 +116,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           <div className="flex-1" />
         </header>
 
-        {/* Page Content */}
         <main className="flex-1 overflow-y-auto p-6">{children}</main>
       </div>
     </div>
