@@ -1,10 +1,10 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react" 
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { signUp, confirmSignUp, resendSignUpCode } from "aws-amplify/auth"
+import { signUp, confirmSignUp, resendSignUpCode, getCurrentUser } from "aws-amplify/auth" // Thêm getCurrentUser
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -16,7 +16,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Loader2 } from "lucide-react" 
 
 export default function SignUpPage() {
   const router = useRouter()
@@ -32,6 +32,20 @@ export default function SignUpPage() {
   const [error, setError] = useState("")
   const [successMessage, setSuccessMessage] = useState("")
   const [loading, setLoading] = useState(false)
+
+  const [checkingAuth, setCheckingAuth] = useState(true)
+
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        await getCurrentUser()
+        router.replace("/home")
+      } catch (err) {
+        setCheckingAuth(false)
+      }
+    }
+    checkAuthStatus()
+  }, [router])
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -52,7 +66,7 @@ export default function SignUpPage() {
         options: {
           userAttributes: {
             email,
-            name: username,
+            name: username, 
           },
         },
       })
@@ -60,7 +74,6 @@ export default function SignUpPage() {
         setStep("verify")
         setSuccessMessage("Account created! Please check your email for the code.")
       } else {
-
         router.push("/signin")
       }
     } catch (err: any) {
@@ -71,7 +84,6 @@ export default function SignUpPage() {
     }
   }
 
-  // 2. Xử lý Xác minh (Confirm Code)
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
@@ -82,8 +94,7 @@ export default function SignUpPage() {
         username,
         confirmationCode: verificationCode
       })
-
-
+      
       router.push("/signin")
     } catch (err: any) {
       setError(err.message || "Verification failed")
@@ -91,7 +102,6 @@ export default function SignUpPage() {
       setLoading(false)
     }
   }
-
 
   const handleResendCode = async () => {
     setError("")
@@ -102,6 +112,14 @@ export default function SignUpPage() {
     } catch (err: any) {
       setError(err.message || "Failed to resend code")
     }
+  }
+
+  if (checkingAuth) {
+    return (
+      <div className="flex min-h-screen w-full items-center justify-center bg-white">
+        <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+      </div>
+    )
   }
 
   return (
@@ -121,7 +139,7 @@ export default function SignUpPage() {
         <CardContent>
 
           {error && (
-            <div className="mb-4 text-sm text-destructive font-medium">{error}</div>
+            <div className="mb-4 text-sm text-red-500 font-medium">{error}</div>
           )}
           {successMessage && (
             <div className="mb-4 text-sm text-green-600 font-medium">{successMessage}</div>
@@ -179,6 +197,7 @@ export default function SignUpPage() {
               </div>
 
               <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 {loading ? "Creating account..." : "Sign Up"}
               </Button>
 
@@ -207,6 +226,7 @@ export default function SignUpPage() {
               </div>
 
               <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 {loading ? "Verifying..." : "Confirm Account"}
               </Button>
 
