@@ -1,9 +1,10 @@
 import {
+  CallHandler,
+  ExecutionContext,
   Injectable,
   NestInterceptor,
-  ExecutionContext,
-  CallHandler,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { MetricService } from './metric.service';
@@ -14,8 +15,16 @@ export class MetricInterceptor implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
-      tap(() => {
-        this.metricService.trackRequest();
+      tap({
+        next: () => {
+          const ctx = context.switchToHttp();
+          const response = ctx.getResponse<Response>();
+          this.metricService.track(response.statusCode);
+        },
+        error: (err) => {
+          const status = err.status || err.statusCode || 500;
+          this.metricService.track(status);
+        },
       }),
     );
   }
