@@ -10,6 +10,8 @@ import { SecretManagerService } from './secret/secret.service';
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { APP_GUARD } from '@nestjs/core';
+import { CognitoAuthGuard } from './auth/cognito.guard';
 
 async function setupDBCredentials(secretManager: SecretManagerService) {
   interface DBSecret {
@@ -62,6 +64,9 @@ async function setupDBCredentials(secretManager: SecretManagerService) {
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [  {
+      provide: APP_GUARD,
+      useClass: CognitoAuthGuard, // Global guard
+    },AppService],
 })
 export class AppModule {}

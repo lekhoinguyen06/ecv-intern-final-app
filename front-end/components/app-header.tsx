@@ -15,12 +15,32 @@ import { useRouter } from "next/navigation"
 export function AppHeader() {
   const router = useRouter()
 
-  const handleLogout = () => {
-    // Clear all client-side state
-    localStorage.removeItem("userProfile")
-    // Redirect to signin page
-    window.location.href = "/signin"
+const handleLogout = () => {
+  try {
+    const {
+      CognitoUserPool,
+    } = require("amazon-cognito-identity-js")
+
+    const userPool = new CognitoUserPool({
+      UserPoolId: "ap-southeast-1_4G7kcguGH",
+      ClientId: "5kuv35ke2b3jvggf65rhu52t9e",
+    })
+
+    const user = userPool.getCurrentUser()
+
+    // 🔴 QUAN TRỌNG NHẤT
+    user?.signOut()
+  } catch (e) {
+    console.warn("Cognito signOut failed", e)
   }
+
+  // 🔥 Clear SAU KHI signOut
+  localStorage.clear()
+  sessionStorage.clear()
+
+  // 🔥 Redirect CỨNG
+  window.location.href = "/signin"
+}
 
   return (
     <header className="flex h-16 items-center justify-between border-b px-6 md:pl-72">

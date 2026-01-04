@@ -21,7 +21,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   const handleLogout = () => {
     // Clear all client-side state
-    localStorage.removeItem("userProfile")
+      localStorage.clear()
+      sessionStorage.clear()
     // Redirect to signin page
     window.location.href = "/signin"
   }

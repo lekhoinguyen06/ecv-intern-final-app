@@ -20,3 +20,4 @@ export const UpdateUserSchema = UserObjectSchema;
 
 export type CreateUserDto = z.infer<typeof UserObjectSchema>;
 export type UpdateUserDto = z.infer<typeof UserObjectSchema>;
+// Noted

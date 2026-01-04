@@ -1,32 +1,54 @@
 "use client"
 
-import type React from "react"
-
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { CognitoUser, AuthenticationDetails } from "amazon-cognito-identity-js"
+import { userPool } from "@/utils/cognito"
+import {  useEffect } from "react"
 
 export default function SignInPage() {
   const router = useRouter()
   const [identifier, setIdentifier] = useState("")
   const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
+
+ 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // Mock login - just navigate to home
-    router.push("/home")
+    setError("")
+
+    const user = new CognitoUser({ Username: identifier, Pool: userPool })
+    const authDetails = new AuthenticationDetails({ Username: identifier, Password: password })
+
+    user.authenticateUser(authDetails, {
+      onSuccess: (result) => {
+        const idToken = result.getIdToken().getJwtToken()
+        const accessToken = result.getAccessToken().getJwtToken()
+        const refreshToken = result.getRefreshToken().getToken()
+
+        localStorage.setItem("accessToken", accessToken)
+        localStorage.setItem("idToken", idToken)
+
+        router.push("/home")
+      },
+      onFailure: (err) => {
+        setError(err.message || JSON.stringify(err))
+      }
+    })
   }
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-white p-4">
+    <div className="flex min-h-screen items-center justify-center bg-white p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-2xl">Sign In</CardTitle>
-          <CardDescription>Enter your credentials to access your profile</CardDescription>
+          <CardDescription>Enter your credentials</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -35,9 +57,8 @@ export default function SignInPage() {
               <Input
                 id="identifier"
                 type="text"
-                placeholder="Enter username or email"
                 value={identifier}
-                onChange={(e) => setIdentifier(e.target.value)}
+                onChange={e => setIdentifier(e.target.value)}
                 required
               />
             </div>
@@ -46,17 +67,16 @@ export default function SignInPage() {
               <Input
                 id="password"
                 type="password"
-                placeholder="Enter password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={e => setPassword(e.target.value)}
                 required
               />
             </div>
-            <Button type="submit" className="w-full">
-              Sign In
-            </Button>
+            {error && <p className="text-sm text-destructive">{error}</p>}
+            <Button type="submit" className="w-full">Sign In</Button>
+
             <p className="text-center text-sm text-muted-foreground">
-              Don&apos;t have an account?{" "}
+              Don't have an account?{" "}
               <Link href="/signup" className="text-foreground underline hover:text-primary">
                 Sign up
               </Link>

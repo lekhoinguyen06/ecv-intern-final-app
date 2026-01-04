@@ -5,8 +5,8 @@ import {
   CallHandler,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable } from 'node_modules/rxjs/dist/types';
+import { map } from 'node_modules/rxjs/dist/types/operators';
 
 import { SuccessResponseDTO } from 'src/dto/res.dto';
 
