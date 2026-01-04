@@ -14,7 +14,7 @@ async function bootstrap() {
   const metricService = app.get(MetricService);
   app.useGlobalInterceptors(
     new SuccessResponseTransformInterceptor(),
-    new MetricInterceptor(MetricService),
+    new MetricInterceptor(metricService),
   );
   app.useGlobalFilters(
     new DatabaseExceptionFilter(logService),
