@@ -10,3 +10,8 @@ export interface User {
   interests: string[];
   notes: string;
 }
+
+export interface emailAvailableMessage {
+  message: string;
+  isAvailable: boolean;
+}

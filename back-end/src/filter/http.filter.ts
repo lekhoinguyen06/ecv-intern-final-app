@@ -7,7 +7,8 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { LogService } from 'src/log/log.service';
-import { ErrorObj, ErrorResponseDTO } from 'src/dto/res.dto';
+import { ErrorResponseDTO } from 'src/dto/res.dto';
+import getApiVersion from 'src/utils/getApiVersion';
 
 @Catch(HttpException)
 @Injectable()
@@ -19,18 +20,15 @@ export class HTTPExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
     const status = exception.getStatus();
-    const exceptionResponse = exception.getResponse();
+    const apiVersion = getApiVersion();
 
-    const errorDetails =
-      typeof exceptionResponse === 'object' && exceptionResponse !== null
-        ? (exceptionResponse as ErrorObj)
-        : {
-            code: status,
-            name: exception.name,
-            message: exception.message,
-            timestamp: new Date().toISOString(),
-            path: request.url,
-          };
+    const errorDetails = {
+      code: status,
+      name: exception.name,
+      message: exception.message,
+      timestamp: new Date().toISOString(),
+      path: request.url,
+    };
 
     // Logging (will log expected usage error such as conflicting email)
     this.logService.error(exception.message, exception);
@@ -39,6 +37,9 @@ export class HTTPExceptionFilter implements ExceptionFilter {
       status: 'error',
       statusCode: status,
       error: errorDetails,
+      meta: {
+        apiVersion,
+      },
     };
 
     response.status(status).json(res);

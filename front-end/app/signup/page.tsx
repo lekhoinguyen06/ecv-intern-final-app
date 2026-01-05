@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -12,15 +13,37 @@ import { userPool } from "@/utils/cognito"
 
 export default function SignUpPage() {
   const router = useRouter()
+
   const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
-  const [error, setError] = useState("")
+  
+  const [verificationCode, setVerificationCode] = useState("")
+  const [step, setStep] = useState<"signup" | "verify">("signup")
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [error, setError] = useState("")
+  const [successMessage, setSuccessMessage] = useState("")
+  const [loading, setLoading] = useState(false)
+
+  const [checkingAuth, setCheckingAuth] = useState(true)
+
+  // useEffect(() => {
+  //   const checkAuthStatus = async () => {
+  //     try {
+  //       await getCurrentUser()
+  //       router.replace("/home")
+  //     } catch (err) {
+  //       setCheckingAuth(false)
+  //     }
+  //   }
+  //   checkAuthStatus()
+  // }, [router])
+
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
+    setSuccessMessage("")
 
     if (password !== confirmPassword) {
       setError("Passwords do not match")
@@ -47,11 +70,18 @@ export default function SignUpPage() {
     <div className="flex min-h-screen w-full items-center justify-center bg-white p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl">Sign Up</CardTitle>
-          <CardDescription>Create a new account to get started</CardDescription>
+          <CardTitle className="text-2xl">
+            {step === "signup" ? "Sign Up" : "Verify Account"}
+          </CardTitle>
+          <CardDescription>
+            {step === "signup" 
+              ? "Create a new account to get started" 
+              : `Enter the code sent to ${email}`}
+          </CardDescription>
         </CardHeader>
+
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSignUp} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="username">Username</Label>
               <Input id="username" type="text" placeholder="Enter username" value={username} onChange={e => setUsername(e.target.value)} required />

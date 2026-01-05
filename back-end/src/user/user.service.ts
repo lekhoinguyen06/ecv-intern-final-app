@@ -1,37 +1,64 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { User } from './interfaces/user.interface';
+import { emailAvailableMessage, User } from './interfaces/user.interface';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User as UserEntity } from './entity/user.entity';
-import { CreateUserDto } from './dto/user.dto';
+import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { LogService } from 'src/log/log.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
-    private usersRepository: Repository<User>,
+    private userRepository: Repository<User>,
     private logService: LogService,
   ) {}
 
   async create(user: CreateUserDto) {
-    const userEntity = this.usersRepository.create(user);
-    const savedUser = await this.usersRepository.save(userEntity);
+    const userEntity = this.userRepository.create(user);
+    const savedUser = await this.userRepository.save(userEntity);
     this.logService.info(`Created user with email: ${savedUser.id}`);
   }
 
   async findOne(email: string): Promise<User | undefined> {
-    const existingUser = await this.usersRepository.findOneBy({ email });
-    if (existingUser) {
-      return existingUser;
-    } else {
-      throw new NotFoundException('Cannot find user');
-    }
+    const existingUser = await this.userRepository.findOneBy({ email });
+    if (!existingUser)
+      throw new NotFoundException(`Cannot find user with email: ${email}`);
+    this.logService.info(`Found user with email: ${email}`);
+    return existingUser;
   }
 
   // Check email
+  async checkEmail(email: string): Promise<emailAvailableMessage | undefined> {
+    const existingUser = await this.userRepository.findOneBy({ email });
+    if (!existingUser)
+      return {
+        message: 'This email is available',
+        isAvailable: true,
+      };
+    this.logService.info(`Found user with email: ${email}`);
+    return {
+      message: 'This email is already used',
+      isAvailable: false,
+    };
+  }
 
   // Update
+  async update(user: UpdateUserDto): Promise<User | undefined> {
+    const existingUser = await this.findOne(user.email);
+    if (!existingUser)
+      throw new NotFoundException(`Cannot find user with email: ${user.email}`);
+    await this.userRepository.update(existingUser.id, user);
+    this.logService.info(`Updated user with email: ${user.email}`);
+    return this.findOne(user.email);
+  }
 
-  // Delete.
+  // Delete
+  async remove(email: string): Promise<void> {
+    const existingUser = await this.findOne(email);
+    if (!existingUser)
+      throw new NotFoundException(`Cannot find user with email: ${email}`);
+    await this.userRepository.delete({ email });
+    this.logService.info(`Deleted user with email: ${email}`);
+  }
 }

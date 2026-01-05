@@ -19,7 +19,20 @@ export default function SignInPage() {
 
  
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // useEffect(() => {
+  //   const checkAuthStatus = async () => {
+  //     try {
+  //       await getCurrentUser()
+  //       router.replace("/home")
+  //     } catch (err) {
+  //       setCheckingAuth(false)
+  //     }
+  //   }
+
+  //   checkAuthStatus()
+  // }, [router])
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
 

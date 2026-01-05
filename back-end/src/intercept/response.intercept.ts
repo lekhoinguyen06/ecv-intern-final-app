@@ -5,8 +5,9 @@ import {
   CallHandler,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { Observable } from 'node_modules/rxjs/dist/types';
-import { map } from 'node_modules/rxjs/dist/types/operators';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import getApiVersion from 'src/utils/getApiVersion';
 
 import { SuccessResponseDTO } from 'src/dto/res.dto';
 
@@ -22,12 +23,16 @@ export class SuccessResponseTransformInterceptor<T> implements NestInterceptor<
     const ctx = context.switchToHttp();
     const response = ctx.getResponse<Response>();
     const statusCode = response.statusCode;
+    const apiVersion = getApiVersion();
 
     return next.handle().pipe(
       map((data: T) => ({
         status: 'success',
         statusCode,
         data,
+        meta: {
+          apiVersion,
+        },
       })),
     );
   }

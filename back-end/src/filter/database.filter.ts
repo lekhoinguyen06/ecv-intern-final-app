@@ -4,6 +4,7 @@ import { QueryFailedError } from 'typeorm';
 import pgErrorMapper from './pgErrorMapper';
 import { ErrorResponseDTO } from 'src/dto/res.dto';
 import { LogService } from 'src/log/log.service';
+import getApiVersion from 'src/utils/getApiVersion';
 
 @Catch(QueryFailedError)
 export class DatabaseExceptionFilter implements ExceptionFilter {
@@ -16,23 +17,29 @@ export class DatabaseExceptionFilter implements ExceptionFilter {
     const pgError = pgErrorMapper(
       (exception.driverError?.['code'] as string) ?? '',
     );
+    const apiVersion = getApiVersion();
 
     // Custom error response
-    const errorDetail: ErrorResponseDTO = {
+    const errorDetails = {
+      code: pgError.code,
+      name: pgError.name,
+      message: exception.message,
+      timestamp: new Date().toISOString(),
+      path: request.url,
+    };
+
+    const res: ErrorResponseDTO = {
       status: 'error',
       statusCode: pgError.httpStatus,
-      error: {
-        code: pgError.code,
-        name: pgError.name,
-        message: exception.message,
-        timestamp: new Date().toISOString(),
-        path: request.url,
+      error: errorDetails,
+      meta: {
+        apiVersion,
       },
     };
 
     // Logging (will log expected usage error such as conflicting email)
     this.logService.error(exception.message, exception);
 
-    response.status(pgError.httpStatus).json(errorDetail);
+    response.status(pgError.httpStatus).json(res);
   }
 }

@@ -4,19 +4,31 @@ import { LogService } from './log/log.service';
 import { HTTPExceptionFilter } from './filter/http.filter';
 import { DatabaseExceptionFilter } from './filter/database.filter';
 import { SuccessResponseTransformInterceptor } from './intercept/response.intercept';
+import { MetricService } from './log/metric.service';
+import { MetricInterceptor } from './log/metric.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const logService = app.get(LogService);
-  app.useGlobalInterceptors(new SuccessResponseTransformInterceptor());
+  const metricService = app.get(MetricService);
+  app.useGlobalInterceptors(
+    new SuccessResponseTransformInterceptor(),
+    new MetricInterceptor(metricService),
+  );
   app.useGlobalFilters(
     new DatabaseExceptionFilter(logService),
     new HTTPExceptionFilter(logService),
   );
-
+  app.enableCors({
+    origin: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  });
   logService.silly('🚀 Application starting...');
   await app.listen(process.env.PORT ?? 3000);
-  logService.silly('✅ Application is running on port 3000');
+  logService.silly(
+    `✅ Application is running on port ${process.env.PORT ?? 3000}`,
+  );
 }
 void bootstrap();
