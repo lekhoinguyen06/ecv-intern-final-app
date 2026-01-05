@@ -76,9 +76,6 @@ describe('User (e2e)', () => {
 
   afterAll(async () => {
     loggerService.close();
-
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
     await app.close();
   });
 });
