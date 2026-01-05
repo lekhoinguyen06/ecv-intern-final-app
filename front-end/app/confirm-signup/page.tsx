@@ -35,7 +35,7 @@ function ConfirmSignUpContent() {
     setSuccess("")
 
     if (!username) {
-      setError("Username không được rỗng")
+      setError("Username is required")
       return
     }
 
@@ -49,7 +49,7 @@ function ConfirmSignUpContent() {
         setError(err.message || JSON.stringify(err))
         return
       }
-      setSuccess("Xác nhận thành công! Chuyển sang trang đăng nhập...")
+      setSuccess("Confirmation successful! Redirecting to sign in page...")
       setTimeout(() => router.push("/signin"), 2000)
     })
   }
