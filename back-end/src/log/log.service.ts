@@ -75,8 +75,8 @@ export class LogService {
   }
 
   close() {
-    this.sillyLogger.destroy();
-    this.cloudWatchLogger.destroy();
-    this.metricLogger.destroy();
+    this.sillyLogger.close();
+    this.cloudWatchLogger.close();
+    this.metricLogger.close();
   }
 }
