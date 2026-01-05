@@ -7,6 +7,7 @@ import {
 import { Response } from 'express';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import getApiVersion from 'src/utils/getApiVersion';
 
 import { SuccessResponseDTO } from 'src/dto/res.dto';
 
@@ -22,12 +23,16 @@ export class SuccessResponseTransformInterceptor<T> implements NestInterceptor<
     const ctx = context.switchToHttp();
     const response = ctx.getResponse<Response>();
     const statusCode = response.statusCode;
+    const apiVersion = getApiVersion();
 
     return next.handle().pipe(
       map((data: T) => ({
         status: 'success',
         statusCode,
         data,
+        meta: {
+          apiVersion,
+        },
       })),
     );
   }
