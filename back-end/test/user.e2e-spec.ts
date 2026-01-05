@@ -51,7 +51,7 @@ describe('User (e2e)', () => {
       const { id, ...rest } = user;
       expect(id).toBeDefined();
       persistant.id = id;
-      expect(rest).toBe(mockUser);
+      expect(rest).toStrictEqual(mockUser);
     }
   });
 
@@ -63,7 +63,7 @@ describe('User (e2e)', () => {
       const { id, ...rest } = user;
       expect(id).toBeDefined();
       expect(persistant.id).toEqual(id);
-      expect(rest).toBe(changedUser);
+      expect(rest).toStrictEqual(changedUser);
     }
   });
 
