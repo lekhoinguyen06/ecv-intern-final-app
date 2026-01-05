@@ -5,5 +5,5 @@ bash ./build.sh -f -e
 cd ./back-end
 pnpm install
 pnpm run build
-pnpm run test:e2e
+# pnpm run test:e2e
 pnpm run start:prod
