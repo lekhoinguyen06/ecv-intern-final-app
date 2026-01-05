@@ -3,10 +3,12 @@ import { INestApplication } from '@nestjs/common';
 import { AppModule } from '../src/app.module';
 import { UserService } from '../src/user/user.service';
 import { CreateUserDto } from '../src/user/dto/user.dto';
+import { LogService } from 'src/log/log.service';
 
 describe('User (e2e)', () => {
   let app: INestApplication;
   let userService: UserService;
+  let loggerService: LogService;
   const mockUser: CreateUserDto = {
     email: 'john.smith@example.com',
     name: 'John Smith Jr.',
@@ -29,6 +31,7 @@ describe('User (e2e)', () => {
 
     app = moduleRef.createNestApplication();
     userService = moduleRef.get<UserService>(UserService);
+    loggerService = moduleRef.get<LogService>(LogService);
     await app.init();
 
     // Clear previous tests if any
@@ -72,8 +75,7 @@ describe('User (e2e)', () => {
   });
 
   afterAll(async () => {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
+    loggerService.close();
     await app.close();
   });
 });

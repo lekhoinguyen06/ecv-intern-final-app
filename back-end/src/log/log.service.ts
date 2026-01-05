@@ -73,4 +73,10 @@ export class LogService {
   error(message: string, error?: Error, context?: object) {
     this.cloudWatchLogger.error(message, { error, context });
   }
+
+  close() {
+    this.sillyLogger.close();
+    this.cloudWatchLogger.close();
+    this.metricLogger.close();
+  }
 }
