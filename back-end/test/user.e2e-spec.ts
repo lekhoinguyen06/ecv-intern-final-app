@@ -72,10 +72,10 @@ describe('User (e2e)', () => {
   });
 
   afterAll(async () => {
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     await app.close();
 
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
   });
 });
