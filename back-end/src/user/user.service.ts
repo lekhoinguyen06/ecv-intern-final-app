@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { User } from './interfaces/user.interface';
+import { emailAvailableMessage, User } from './interfaces/user.interface';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User as UserEntity } from './entity/user.entity';
@@ -29,6 +29,19 @@ export class UserService {
   }
 
   // Check email
+  async checkEmail(email: string): Promise<emailAvailableMessage | undefined> {
+    const existingUser = await this.usersRepository.findOneBy({ email });
+    if (!existingUser)
+      return {
+        message: 'This email is available',
+        isAvailable: true,
+      };
+    this.logService.info(`Found user with email: ${email}`);
+    return {
+      message: 'This email is already used',
+      isAvailable: false,
+    };
+  }
 
   // Update
   async update(user: UpdateUserDto): Promise<User | undefined> {

@@ -15,7 +15,7 @@ import {
   type CreateUserDto,
   type UpdateUserDto,
 } from './dto/user.dto';
-import { User } from './interfaces/user.interface';
+import { User, emailAvailableMessage } from './interfaces/user.interface';
 import { ZodValidationPipe } from 'src/pipe/zod.pipe';
 
 @Controller('api/user')
@@ -34,6 +34,14 @@ export class UserController {
     return this.userService.findOne(email);
   }
 
+  // GET /users/check
+  @Get('check')
+  check(
+    @Query('email') email: string,
+  ): Promise<emailAvailableMessage | undefined> {
+    return this.userService.checkEmail(email);
+  }
+
   // PUT /users
   @Put()
   @UsePipes(new ZodValidationPipe(UpdateUserSchema))
@@ -43,7 +51,7 @@ export class UserController {
 
   // DELETE /users
   @Delete()
-  remove(@Query('email') email: string): Promise<void> {
+  delete(@Query('email') email: string): Promise<void> {
     return this.userService.remove(email);
   }
 }
