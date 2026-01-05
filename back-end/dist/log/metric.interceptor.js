@@ -26,8 +26,14 @@ let MetricInterceptor = class MetricInterceptor {
                 this.metricService.track(response.statusCode);
             },
             error: (err) => {
-                const status = err.status || err.statusCode || 500;
-                this.metricService.track(status);
+                if (err instanceof common_1.HttpException) {
+                    const status = err.getStatus() || 500;
+                    this.metricService.track(status);
+                    throw err;
+                }
+                else {
+                    throw err;
+                }
             },
         }));
     }

@@ -1,6 +1,7 @@
 import {
   CallHandler,
   ExecutionContext,
+  HttpException,
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
@@ -22,8 +23,13 @@ export class MetricInterceptor implements NestInterceptor {
           this.metricService.track(response.statusCode);
         },
         error: (err) => {
-          const status = err.status || err.statusCode || 500;
-          this.metricService.track(status);
+          if (err instanceof HttpException) {
+            const status = err.getStatus() || 500;
+            this.metricService.track(status);
+            throw err;
+          } else {
+            throw err;
+          }
         },
       }),
     );
