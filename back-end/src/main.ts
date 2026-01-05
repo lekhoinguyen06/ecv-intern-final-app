@@ -9,6 +9,7 @@ import { MetricInterceptor } from './log/metric.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableShutdownHooks();
 
   const logService = app.get(LogService);
   const metricService = app.get(MetricService);
