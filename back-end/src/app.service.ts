@@ -1,8 +1,11 @@
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
+import { LogService } from './log/log.service';
 
 @Injectable()
 export class AppService implements OnModuleDestroy {
+  constructor(private logService: LogService) {}
+
   onModuleDestroy() {
-    console.log('🛑 Application is shutting down');
+    this.logService.silly('🛑 Application is shutting down');
   }
 }
