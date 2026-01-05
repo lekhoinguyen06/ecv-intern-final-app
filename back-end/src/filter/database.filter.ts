@@ -1,7 +1,7 @@
 import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { QueryFailedError } from 'typeorm';
-import pgErrorMapper from './pgErrorMapper';
+import pgErrorMapper from 'src/utils/pgErrorMapper';
 import { ErrorResponseDTO } from 'src/dto/res.dto';
 import { LogService } from 'src/log/log.service';
 import getApiVersion from 'src/utils/getApiVersion';

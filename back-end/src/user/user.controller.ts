@@ -28,13 +28,13 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  // GET /user
+  // GET /user?email=<email>
   @Get()
   findOne(@Query('email') email: string): Promise<User | undefined> {
     return this.userService.findOne(email);
   }
 
-  // GET /user/check
+  // GET /user/check?email=<email>
   @Get('check')
   check(
     @Query('email') email: string,
@@ -49,7 +49,7 @@ export class UserController {
     return this.userService.update(updateUsersDto);
   }
 
-  // DELETE /user
+  // DELETE /user?email=<email>
   @Delete()
   remove(@Query('email') email: string): Promise<void> {
     return this.userService.remove(email);
