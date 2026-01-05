@@ -1,7 +1,7 @@
 {
   "moduleFileExtensions": ["js", "json", "ts"],
   "rootDir": ".",
-  "testEnvironment": "node --experimental-vm-modules ../node_modules/jest/bin/jest.js",
+  "testEnvironment": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
