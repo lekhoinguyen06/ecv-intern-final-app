@@ -43,7 +43,7 @@ export class UserController {
 
   // DELETE /users
   @Delete()
-  remove(@Body('email') email: string): Promise<void> {
+  remove(@Query('email') email: string): Promise<void> {
     return this.userService.remove(email);
   }
 }

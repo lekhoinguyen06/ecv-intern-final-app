@@ -9,13 +9,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LogModule = void 0;
 const common_1 = require("@nestjs/common");
 const log_service_1 = require("./log.service");
+const metric_service_1 = require("./metric.service");
+const metric_interceptor_1 = require("./metric.interceptor");
 let LogModule = class LogModule {
 };
 exports.LogModule = LogModule;
 exports.LogModule = LogModule = __decorate([
     (0, common_1.Module)({
-        providers: [log_service_1.LogService],
-        exports: [log_service_1.LogService],
+        providers: [log_service_1.LogService, metric_service_1.MetricService, metric_interceptor_1.MetricInterceptor],
+        exports: [log_service_1.LogService, metric_service_1.MetricService, metric_interceptor_1.MetricInterceptor],
     })
 ], LogModule);
 //# sourceMappingURL=log.module.js.map

@@ -33,15 +33,20 @@ export class MetricService implements OnModuleInit {
 
     setTimeout(() => {
       this.logAndReset();
-      setInterval(() => {
-        this.logAndReset();
-      }, 24 * 60 * 60 * 1000);
+      setInterval(
+        () => {
+          this.logAndReset();
+        },
+        24 * 60 * 60 * 1000,
+      );
     }, timeUntilMidnight);
   }
 
   private logAndReset() {
-    const totalRequests = Object.values(this.metrics).reduce((a, b) => a + b, 0);
-    
+    const totalRequests = Object.values(this.metrics).reduce(
+      (a, b) => a + b,
+      0,
+    );
 
     if (totalRequests > 0) {
       const payload = {
@@ -50,7 +55,7 @@ export class MetricService implements OnModuleInit {
         totalRequests,
         statusCodeBreakdown: { ...this.metrics },
       };
-      
+
       this.logService.metric(payload);
     }
 
