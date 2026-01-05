@@ -28,6 +28,9 @@ let UserController = class UserController {
     findOne(email) {
         return this.userService.findOne(email);
     }
+    check(email) {
+        return this.userService.checkEmail(email);
+    }
     update(updateUsersDto) {
         return this.userService.update(updateUsersDto);
     }
@@ -51,6 +54,13 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Get)('check'),
+    __param(0, (0, common_1.Query)('email')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "check", null);
 __decorate([
     (0, common_1.Put)(),
     (0, common_1.UsePipes)(new zod_pipe_1.ZodValidationPipe(user_dto_1.UpdateUserSchema)),

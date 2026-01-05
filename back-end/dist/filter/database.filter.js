@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("typeorm");
 const pgErrorMapper_1 = __importDefault(require("./pgErrorMapper"));
 const log_service_1 = require("../log/log.service");
+const getApiVersion_1 = __importDefault(require("../utils/getApiVersion"));
 let DatabaseExceptionFilter = class DatabaseExceptionFilter {
     logService;
     constructor(logService) {
@@ -27,6 +28,7 @@ let DatabaseExceptionFilter = class DatabaseExceptionFilter {
         const request = ctx.getRequest();
         const response = ctx.getResponse();
         const pgError = (0, pgErrorMapper_1.default)(exception.driverError?.['code'] ?? '');
+        const apiVersion = (0, getApiVersion_1.default)();
         const errorDetails = {
             code: pgError.code,
             name: pgError.name,
@@ -38,6 +40,9 @@ let DatabaseExceptionFilter = class DatabaseExceptionFilter {
             status: 'error',
             statusCode: pgError.httpStatus,
             error: errorDetails,
+            meta: {
+                apiVersion,
+            },
         };
         this.logService.error(exception.message, exception);
         response.status(pgError.httpStatus).json(res);

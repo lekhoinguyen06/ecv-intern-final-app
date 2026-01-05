@@ -8,10 +8,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HTTPExceptionFilter = void 0;
 const common_1 = require("@nestjs/common");
 const log_service_1 = require("../log/log.service");
+const getApiVersion_1 = __importDefault(require("../utils/getApiVersion"));
 let HTTPExceptionFilter = class HTTPExceptionFilter {
     logService;
     constructor(logService) {
@@ -22,6 +26,7 @@ let HTTPExceptionFilter = class HTTPExceptionFilter {
         const response = ctx.getResponse();
         const request = ctx.getRequest();
         const status = exception.getStatus();
+        const apiVersion = (0, getApiVersion_1.default)();
         const errorDetails = {
             code: status,
             name: exception.name,
@@ -34,6 +39,9 @@ let HTTPExceptionFilter = class HTTPExceptionFilter {
             status: 'error',
             statusCode: status,
             error: errorDetails,
+            meta: {
+                apiVersion,
+            },
         };
         response.status(status).json(res);
     }

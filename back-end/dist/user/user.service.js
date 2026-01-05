@@ -19,36 +19,50 @@ const typeorm_2 = require("typeorm");
 const user_entity_1 = require("./entity/user.entity");
 const log_service_1 = require("../log/log.service");
 let UserService = class UserService {
-    usersRepository;
+    userRepository;
     logService;
-    constructor(usersRepository, logService) {
-        this.usersRepository = usersRepository;
+    constructor(userRepository, logService) {
+        this.userRepository = userRepository;
         this.logService = logService;
     }
     async create(user) {
-        const userEntity = this.usersRepository.create(user);
-        const savedUser = await this.usersRepository.save(userEntity);
+        const userEntity = this.userRepository.create(user);
+        const savedUser = await this.userRepository.save(userEntity);
         this.logService.info(`Created user with email: ${savedUser.id}`);
     }
     async findOne(email) {
-        const existingUser = await this.usersRepository.findOneBy({ email });
+        const existingUser = await this.userRepository.findOneBy({ email });
         if (!existingUser)
             throw new common_1.NotFoundException(`Cannot find user with email: ${email}`);
         this.logService.info(`Found user with email: ${email}`);
         return existingUser;
     }
+    async checkEmail(email) {
+        const existingUser = await this.userRepository.findOneBy({ email });
+        if (!existingUser)
+            return {
+                message: 'This email is available',
+                isAvailable: true,
+            };
+        this.logService.info(`Found user with email: ${email}`);
+        return {
+            message: 'This email is already used',
+            isAvailable: false,
+        };
+    }
     async update(user) {
         const existingUser = await this.findOne(user.email);
         if (!existingUser)
             throw new common_1.NotFoundException(`Cannot find user with email: ${user.email}`);
-        await this.usersRepository.update(existingUser.id, user);
+        await this.userRepository.update(existingUser.id, user);
         this.logService.info(`Updated user with email: ${user.email}`);
+        return this.findOne(user.email);
     }
     async remove(email) {
         const existingUser = await this.findOne(email);
         if (!existingUser)
             throw new common_1.NotFoundException(`Cannot find user with email: ${email}`);
-        await this.usersRepository.delete({ email });
+        await this.userRepository.delete({ email });
         this.logService.info(`Deleted user with email: ${email}`);
     }
 };

@@ -99,6 +99,11 @@ let LogService = class LogService {
     error(message, error, context) {
         this.cloudWatchLogger.error(message, { error, context });
     }
+    close() {
+        this.sillyLogger.close();
+        this.cloudWatchLogger.close();
+        this.metricLogger.close();
+    }
 };
 exports.LogService = LogService;
 exports.LogService = LogService = __decorate([
