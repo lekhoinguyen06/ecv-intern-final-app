@@ -21,20 +21,20 @@ import { ZodValidationPipe } from 'src/pipe/zod.pipe';
 @Controller('api/user')
 export class UserController {
   constructor(private userService: UserService) {}
-  // POST /users
+  // POST /user
   @Post()
   @UsePipes(new ZodValidationPipe(CreateUserSchema))
   create(@Body() createUserDto: CreateUserDto): Promise<void> {
     return this.userService.create(createUserDto);
   }
 
-  // GET /users
+  // GET /user
   @Get()
   findOne(@Query('email') email: string): Promise<User | undefined> {
     return this.userService.findOne(email);
   }
 
-  // GET /users/check
+  // GET /user/check
   @Get('check')
   check(
     @Query('email') email: string,
@@ -42,14 +42,14 @@ export class UserController {
     return this.userService.checkEmail(email);
   }
 
-  // PUT /users
+  // PUT /user
   @Put()
   @UsePipes(new ZodValidationPipe(UpdateUserSchema))
   update(@Body() updateUsersDto: UpdateUserDto) {
     return this.userService.update(updateUsersDto);
   }
 
-  // DELETE /users
+  // DELETE /user
   @Delete()
   delete(@Query('email') email: string): Promise<void> {
     return this.userService.remove(email);
