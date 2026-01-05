@@ -34,7 +34,7 @@ describe('User (e2e)', () => {
 
     // Clear previous tests if any
     const user = await userService.checkEmail(mockUser.email);
-    if (user?.isAvailable) await userService.remove(mockUser.email);
+    if (!user?.isAvailable) await userService.remove(mockUser.email);
   });
 
   // My tests
