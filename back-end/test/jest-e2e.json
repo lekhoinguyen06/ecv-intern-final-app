@@ -14,10 +14,5 @@
     "**/*.(t|j)s"
   ],
   "coverageDirectory": "../coverage",
-  "extensionsToTreatAsEsm": [".ts"],
-  "globals": {
-    "ts-jest": {
-      "useESM": true
-    }
-  }
+  "extensionsToTreatAsEsm": [".ts"]
 }
