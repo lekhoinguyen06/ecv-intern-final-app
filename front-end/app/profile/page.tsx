@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { fetchAuthSession, fetchUserAttributes } from "aws-amplify/auth"
-
 import { AppLayout } from "@/components/app-layout"
 import { Card, CardContent, CardTitle, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -24,6 +22,10 @@ interface ProfileFormData {
 }
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"
+
+function parseJwt(token: string) {
+  try { return JSON.parse(atob(token.split('.')[1])); } catch (e) { return null; }
+}
 
 export default function ProfilePage() {
   const router = useRouter()
@@ -50,20 +52,23 @@ export default function ProfilePage() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const attributes = await fetchUserAttributes()
-        const email = attributes.email
+        const accessToken = localStorage.getItem("accessToken")
+        const idToken = localStorage.getItem("idToken")
+
+        if (!accessToken || !idToken) {
+          router.push("/signin")
+          return
+        }
+
+        const userData = parseJwt(idToken)
+        const email = userData?.email
         setUserEmail(email || "")
-
-        const session = await fetchAuthSession()
-        const token = session.tokens?.accessToken?.toString()
-
-        if (!token) throw new Error("No session token")
 
         const params = new URLSearchParams({ email: email || "" })
         const res = await fetch(`${API_URL}/api/user?${params.toString()}`, {
           method: "GET",
-          headers: { 
-            "Authorization": `Bearer ${token}`,
+          headers: {
+            "Authorization": `Bearer ${accessToken}`,
             "Content-Type": "application/json"
           }
         })
@@ -73,14 +78,14 @@ export default function ProfilePage() {
           setIsEditing(true)
         } else if (res.ok) {
           const json = await res.json()
-          const data = json.data || json 
+          const data = json.data || json
 
           if (!data.name) {
-             setHasExistingProfile(false)
-             setIsEditing(true)
+            setHasExistingProfile(false)
+            setIsEditing(true)
           } else {
-             setHasExistingProfile(true)
-             setIsEditing(false) 
+            setHasExistingProfile(true)
+            setIsEditing(false)
           }
 
           const mappedData = {
@@ -94,28 +99,25 @@ export default function ProfilePage() {
           }
 
           setFormData(mappedData)
-          setOriginalData(mappedData) 
+          setOriginalData(mappedData)
         }
-      } catch (error: any) {
+      } catch (error) {
         console.error("Load failed:", error)
-        if (String(error).includes("User not signed in")) {
-          router.push("/signin")
-        }
+        router.push("/signin")
       } finally {
         setLoading(false)
       }
     }
     loadData()
-  }, [])
+  }, [router])
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
 
     try {
-      const session = await fetchAuthSession()
-      const token = session.tokens?.accessToken?.toString()
-      if (!token) throw new Error("No session")
+      const accessToken = localStorage.getItem("accessToken")
+      if (!accessToken) throw new Error("No session")
 
       const payload = {
         email: userEmail,
@@ -126,7 +128,7 @@ export default function ProfilePage() {
         jobTitle: formData.occupation,
         studies: formData.education.split(",").map(s => s.trim()).filter(s => s !== ""),
         interests: formData.hobbies.split(",").map(h => h.trim()).filter(h => h !== ""),
-        notes: "Interested in leadership roles"
+        notes: "User updated profile"
       }
 
       const method = hasExistingProfile ? "PUT" : "POST"
@@ -135,7 +137,7 @@ export default function ProfilePage() {
         method: method,
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          "Authorization": `Bearer ${accessToken}`,
         },
         body: JSON.stringify(payload),
       })
@@ -144,14 +146,12 @@ export default function ProfilePage() {
 
       setHasExistingProfile(true)
       setIsEditing(false)
-      
-      setOriginalData(formData) 
-      
+      setOriginalData(formData)
       showToast("Profile saved successfully!", "success")
 
     } catch (error) {
       console.error(error)
-      showToast("Error saving profile. Please try again.", "error")
+      showToast("Error saving profile.", "error")
     } finally {
       setLoading(false)
     }
@@ -167,16 +167,16 @@ export default function ProfilePage() {
     setLoading(true)
 
     try {
-      const session = await fetchAuthSession()
-      const token = session.tokens?.accessToken?.toString()
+      const accessToken = localStorage.getItem("accessToken")
       
-      const res = await fetch(`${API_URL}/api/user`, {
+      // Backend của bạn dùng @Query('email') cho DELETE
+      const params = new URLSearchParams({ email: userEmail })
+      const res = await fetch(`${API_URL}/api/user?${params.toString()}`, {
         method: "DELETE",
-        headers: { 
-            "Authorization": `Bearer ${token}`, 
-            "Content-Type": "application/json" 
-        },
-        body: JSON.stringify({ email: userEmail })
+        headers: {
+          "Authorization": `Bearer ${accessToken}`,
+          "Content-Type": "application/json"
+        }
       })
 
       if (res.ok) {
@@ -184,7 +184,7 @@ export default function ProfilePage() {
         setIsEditing(true)
         const emptyData = { fullName: "", age: "", gender: "", occupation: "", education: "", hobbies: "", description: "" }
         setFormData(emptyData)
-        setOriginalData(emptyData) 
+        setOriginalData(emptyData)
         showToast("Profile deleted successfully.", "success")
       } else {
         showToast("Failed to delete profile.", "error")
@@ -259,42 +259,13 @@ export default function ProfilePage() {
                     </Button>
                     
                     {hasExistingProfile && (
-                      <Button 
-                        type="button" 
-                        variant="outline" 
-                        // SỬ DỤNG HÀM HANDLE CANCEL MỚI
-                        onClick={(e) => {
-                            e.preventDefault();
-                            handleCancel(); 
-                        }}
-                      >
-                        Cancel
-                      </Button>
+                      <Button type="button" variant="outline" onClick={(e) => { e.preventDefault(); handleCancel(); }}>Cancel</Button>
                     )}
                   </>
                 ) : (
                   <>
-                    <Button 
-                      type="button" 
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setIsEditing(true); 
-                      }} 
-                      className="flex-1"
-                    >
-                      <Edit className="mr-2 h-4 w-4"/> Edit
-                    </Button>
-
-                    <Button 
-                      type="button" 
-                      variant="destructive" 
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleDelete();
-                      }}
-                    >
-                      <Trash2 className="mr-2 h-4 w-4"/> Delete
-                    </Button>
+                    <Button type="button" onClick={(e) => { e.preventDefault(); setIsEditing(true); }} className="flex-1"><Edit className="mr-2 h-4 w-4"/> Edit</Button>
+                    <Button type="button" variant="destructive" onClick={(e) => { e.preventDefault(); handleDelete(); }}><Trash2 className="mr-2 h-4 w-4"/> Delete</Button>
                   </>
                 )}
               </div>

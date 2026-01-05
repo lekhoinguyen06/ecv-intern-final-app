@@ -1,21 +1,22 @@
 "use client"
 
-import type React from "react"
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-
 import { AppLayout } from "@/components/app-layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
-
 import { CheckCircle, AlertCircle, X } from "lucide-react" 
-
-import { fetchAuthSession, updatePassword, fetchUserAttributes, getCurrentUser } from "aws-amplify/auth"
+import { CognitoUser, AuthenticationDetails } from "amazon-cognito-identity-js" // Dùng thư viện cũ
+import { userPool } from "@/utils/cognito" // Lấy userPool từ file utils của bạn
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"
+
+function parseJwt(token: string) {
+  try { return JSON.parse(atob(token.split('.')[1])); } catch (e) { return null; }
+}
 
 export default function SettingsPage() {
   const router = useRouter()
@@ -30,17 +31,11 @@ export default function SettingsPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [passwordError, setPasswordError] = useState("")
-
-
   const [notification, setNotification] = useState({ show: false, message: "", type: "success" })
-
 
   const showToast = (message: string, type: "success" | "error" = "success") => {
     setNotification({ show: true, message, type })
-
-    setTimeout(() => {
-      setNotification((prev) => ({ ...prev, show: false }))
-    }, 3000)
+    setTimeout(() => { setNotification((prev) => ({ ...prev, show: false })) }, 3000)
   }
 
   useEffect(() => {
@@ -50,67 +45,33 @@ export default function SettingsPage() {
   const loadUserData = async () => {
     try {
       setIsLoading(true)
-      const { username: cognitoUsername } = await getCurrentUser()
-      setUsername(cognitoUsername)
+      const accessToken = localStorage.getItem("accessToken")
+      const idToken = localStorage.getItem("idToken")
 
-      const attributes = await fetchUserAttributes()
-      const userEmail = attributes.email
-      setEmail(userEmail || "")
-
-      const session = await fetchAuthSession()
-      const token = session.tokens?.accessToken?.toString()
-      
-      if (!token) throw new Error("No session token found")
-      
-      const params = new URLSearchParams({ email: userEmail || "" })
-      await fetch(`${API_URL}/api/user?${params.toString()}`, {
-        method: "GET",
-        headers: { "Authorization": `Bearer ${token}` }
-      })
-
-    } catch (error: any) {
-      console.error("Error loading user data:", error)
-      if (
-        error.name === "UserUnAuthenticatedException" || 
-        error.message?.includes("authenticated") ||
-        String(error).includes("User not signed in")
-      ) {
-        router.push("/signin") 
+      if (!accessToken || !idToken) {
+         throw new Error("No session")
       }
+
+      const userData = parseJwt(idToken)
+      setUsername(userData["cognito:username"] || userData.sub)
+      setEmail(userData.email)
+      
+    } catch (error) {
+      router.push("/signin") 
     } finally {
       setIsLoading(false)
     }
   }
 
-  const handleAccountUpdate = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSaving(true)
-
-    try {
-      const session = await fetchAuthSession()
-      const token = session.tokens?.accessToken?.toString()
-      if (!token) throw new Error("Please login again")
-
-      const res = await fetch(`${API_URL}/api/user`, {
-        method: "PUT",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: email, username: username }),
-      })
-
-      if (!res.ok) throw new Error("Failed to update profile")
-
-
-      showToast("Account information updated successfully!", "success") 
-    } catch (error) {
-      console.error("Update failed:", error)
-
-      showToast("Failed to update. Please try again.", "error")
-    } finally {
-      setIsSaving(false)
+  const handleSignOut = () => {
+    // 1. Lấy user hiện tại để signout từ SDK
+    const cognitoUser = userPool.getCurrentUser();
+    if (cognitoUser) {
+      cognitoUser.signOut();
     }
+    // 2. Xóa sạch Local Storage tự quản lý
+    localStorage.clear()
+    router.push("/signin")
   }
 
   const handlePasswordChange = async (e: React.FormEvent) => {
@@ -122,27 +83,43 @@ export default function SettingsPage() {
       return
     }
 
-    try {
-      setIsSaving(true)
-      await updatePassword({
-        oldPassword: currentPassword,
-        newPassword: newPassword
-      })
+    setIsSaving(true)
 
+    // Quy trình đổi pass với amazon-cognito-identity-js
+    const cognitoUser = new CognitoUser({
+      Username: username,
+      Pool: userPool,
+    });
 
-      showToast("Password changed successfully!", "success")
-      
-      setCurrentPassword("")
-      setNewPassword("")
-      setConfirmPassword("")
-    } catch (error: any) {
-      console.error("Change password error:", error)
-      setPasswordError(error.message || "Failed to change password")
+    // Cần authenticate lại để đổi pass (hoặc dùng session cũ nếu còn hạn)
+    // Cách an toàn nhất là xác thực lại bằng mật khẩu cũ
+    const authDetails = new AuthenticationDetails({
+        Username: username,
+        Password: currentPassword,
+    });
 
-      showToast(error.message || "Failed to change password", "error")
-    } finally {
-      setIsSaving(false)
-    }
+    cognitoUser.authenticateUser(authDetails, {
+        onSuccess: () => {
+            // Sau khi xác thực pass cũ thành công -> Đổi sang pass mới
+            cognitoUser.changePassword(currentPassword, newPassword, (err, result) => {
+                setIsSaving(false)
+                if (err) {
+                    setPasswordError(err.message || JSON.stringify(err))
+                    showToast("Failed to change password", "error")
+                    return
+                }
+                showToast("Password changed successfully!", "success")
+                setCurrentPassword("")
+                setNewPassword("")
+                setConfirmPassword("")
+            });
+        },
+        onFailure: (err) => {
+            setIsSaving(false)
+            setPasswordError("Current password is incorrect")
+            showToast("Current password is incorrect", "error")
+        }
+    });
   }
 
   if (isLoading) {
@@ -174,32 +151,33 @@ export default function SettingsPage() {
           </div>
         )}
 
-        <div>
-          <h1 className="text-3xl font-bold">Account Settings</h1>
-          <p className="text-muted-foreground">Manage your account information and security</p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold">Account Settings</h1>
+            <p className="text-muted-foreground">Manage your account information and security</p>
+          </div>
+          <Button variant="destructive" onClick={handleSignOut}>Sign Out</Button>
         </div>
         
-
         <Card>
           <CardHeader>
             <CardTitle>Account Information</CardTitle>
             <CardDescription>View your account details</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleAccountUpdate} className="space-y-4">
+            <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input id="email" type="email" value={email} disabled className="bg-muted"/>
-                <p className="text-xs text-muted-foreground">Email cannot be changed directly.</p>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="username">Username (Cognito ID)</Label>
+                <Label htmlFor="username">Username</Label>
                 <Input id="username" type="text" value={username} disabled className="bg-muted" />
-                <p className="text-xs text-muted-foreground">This is your unique Cognito ID and cannot be changed.</p>
               </div>
-            </form>
+            </div>
           </CardContent>
         </Card>
+
         <Card>
           <CardHeader>
             <CardTitle>Change Password</CardTitle>

@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { getCurrentUser, fetchAuthSession, fetchUserAttributes } from "aws-amplify/auth" 
-
 import { AppLayout } from "@/components/app-layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -11,74 +9,84 @@ import { User, CheckCircle, AlertCircle, Loader2 } from "lucide-react"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"
 
+// Hàm giải mã JWT token để lấy thông tin (email, username)
+function parseJwt(token: string) {
+  try {
+    return JSON.parse(atob(token.split('.')[1]));
+  } catch (e) {
+    return null;
+  }
+}
+
 export default function HomePage() {
   const router = useRouter()
   const [hasProfile, setHasProfile] = useState(false)
   const [username, setUsername] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(true) 
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    checkUserAndProfile()
-  }, [])
+    const checkUserAndProfile = async () => {
+      try {
+        setIsLoading(true)
 
-  const checkUserAndProfile = async () => {
-    try {
-      setIsLoading(true)
+        // 1. Lấy token từ LocalStorage
+        const accessToken = localStorage.getItem("accessToken")
+        const idToken = localStorage.getItem("idToken")
 
-      const { username: cognitoUsername } = await getCurrentUser()
-      const attributes = await fetchUserAttributes()
-      setUsername(cognitoUsername)
+        if (!accessToken || !idToken) {
+          throw new Error("No token found")
+        }
 
-      const session = await fetchAuthSession()
-      const token = session.tokens?.accessToken?.toString()
+        // 2. Lấy thông tin user từ idToken
+        const userData = parseJwt(idToken)
+        if (!userData) throw new Error("Invalid token")
+        
+        setUsername(userData["cognito:username"] || userData.name || "User")
+        const email = userData.email
 
-      if (!token) throw new Error("No session token found")
+        // 3. Gọi Backend API
+        const params = new URLSearchParams({ email: email })
+        const res = await fetch(`${API_URL}/api/user?${params.toString()}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${accessToken}`, // Gửi AccessToken lên Backend
+            "Content-Type": "application/json"
+          },
+        })
 
-      const params = new URLSearchParams({ email: attributes.email || "" })
-      
-      const res = await fetch(`${API_URL}/api/user?${params.toString()}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-      })
+        if (res.ok) {
+          const json = await res.json()
+          const data = json.data || json
 
-      if (res.ok) {
-        const json = await res.json()
-        const data = json.data || json
-
-        // Chỉ tính là có profile nếu các trường quan trọng đều có dữ liệu
-        const isComplete = 
-            data.name && 
-            data.age && 
-            data.sex && 
-            data.jobTitle && 
+          // Kiểm tra xem profile đã điền đủ chưa
+          const isComplete =
+            data.name &&
+            data.age &&
+            data.sex &&
+            data.jobTitle &&
             data.description &&
             (Array.isArray(data.studies) ? data.studies.length > 0 : data.studies) &&
             (Array.isArray(data.interests) ? data.interests.length > 0 : data.interests)
 
-        setHasProfile(Boolean(isComplete))
-      } else if (res.status === 404) {
-        setHasProfile(false)
-      } else {
-        console.warn("Unexpected API response:", res.status)
-        setHasProfile(false)
-      }
-      
-    } catch (error: any) {
-      console.error("Error:", error)
-      if (
-        error.name === "UserUnAuthenticatedException" || 
-        error.message?.includes("authenticated") ||
-        String(error).includes("User not signed in")
-      ) {
+          setHasProfile(Boolean(isComplete))
+        } else if (res.status === 404) {
+          setHasProfile(false)
+        } else {
+          setHasProfile(false)
+        }
+
+      } catch (error) {
+        console.error("Auth error:", error)
+        // Nếu lỗi liên quan đến token hoặc không có token -> Logout
+        localStorage.clear()
         router.push("/signin")
+      } finally {
+        setIsLoading(false)
       }
-    } finally {
-      setIsLoading(false)
     }
-  }
+
+    checkUserAndProfile()
+  }, [router])
 
   if (isLoading) {
     return (
