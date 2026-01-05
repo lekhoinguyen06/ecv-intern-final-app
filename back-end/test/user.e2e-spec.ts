@@ -75,7 +75,5 @@ describe('User (e2e)', () => {
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
     await app.close();
-
-    await new Promise((resolve) => setTimeout(resolve, 2000));
   });
 });
