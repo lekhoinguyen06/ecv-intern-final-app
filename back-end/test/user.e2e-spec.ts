@@ -1,4 +1,3 @@
-// import request from 'supertest';
 import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from '../src/app.module';
@@ -33,8 +32,12 @@ describe('User (e2e)', () => {
     await app.init();
 
     // Clear previous tests if any
-    const user = await userService.checkEmail(mockUser.email);
-    if (!user?.isAvailable) await userService.remove(mockUser.email);
+    try {
+      const user = await userService.checkEmail(mockUser.email);
+      if (!user?.isAvailable) await userService.remove(mockUser.email);
+    } catch {
+      // Do nothing
+    }
   });
 
   // My tests
