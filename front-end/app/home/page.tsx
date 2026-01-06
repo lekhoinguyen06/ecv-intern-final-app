@@ -81,7 +81,7 @@ export default function HomePage() {
       } catch (error) {
         console.error("Auth error:", error)
         // Nếu lỗi liên quan đến token hoặc không có token -> Logout
-        router.push("/signin")
+
       } finally {
         setIsLoading(false)
       }
