@@ -170,13 +170,12 @@ export default function ProfilePage() {
       const session = await fetchAuthSession()
       const token = session.tokens?.accessToken?.toString()
       
-      const res = await fetch(`${API_URL}/api/user`, {
+      const res = await fetch(`${API_URL}/api/user?email=${userEmail}`, {
         method: "DELETE",
         headers: { 
             "Authorization": `Bearer ${token}`, 
             "Content-Type": "application/json" 
-        },
-        body: JSON.stringify({ email: userEmail })
+        }
       })
 
       if (res.ok) {
