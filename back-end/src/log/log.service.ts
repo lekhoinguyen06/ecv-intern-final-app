@@ -55,7 +55,7 @@ export class LogService {
   }
 
   metric(message: string, obj: object) {
-    this.metricLogger.info(message, obj);
+    this.metricLogger.info(message, JSON.stringify(obj));
   }
 
   silly(silly: string) {
@@ -71,7 +71,7 @@ export class LogService {
   }
 
   error(message: string, error?: Error, context?: object) {
-    this.cloudWatchLogger.error(message, { error, context });
+    this.cloudWatchLogger.error(message, JSON.stringify({ error, context }));
   }
 
   close() {
