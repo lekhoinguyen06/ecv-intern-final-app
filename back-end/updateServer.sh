@@ -1,6 +1,6 @@
 cd ~/ecv-intern-final-app/
 git reset --hard
-git pull origin main
+git pull origin hung
 bash ./build.sh -f -b
 cd ./back-end
 pnpm install
