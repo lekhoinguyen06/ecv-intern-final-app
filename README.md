@@ -1,5 +1,35 @@
 # ECV Intern Final Project Application
 
+## Repository structure
+```text
+├── back-end
+│   ├── client
+│   ├── src
+│   │   ├── dto
+│   │   ├── filter
+│   │   ├── intercept
+│   │   ├── log
+│   │   ├── pipe
+│   │   ├── secret
+│   │   ├── user
+│   │   └── utils
+│   └── test
+└── front-end
+    ├── app
+    │   ├── home
+    │   ├── profile
+    │   ├── settings
+    │   ├── signin
+    │   └── signup
+    ├── components
+    │   └── ui
+    ├── hooks
+    ├── lib
+    ├── public
+    └── styles
+
+```
+
 ## Useful scripts
 
 ### To deploy on ec2
