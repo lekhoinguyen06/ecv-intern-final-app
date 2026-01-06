@@ -40,7 +40,7 @@ export default function HomePage() {
         // 2. Lấy thông tin user từ idToken
         const userData = parseJwt(idToken)
         if (!userData) throw new Error("Invalid token")
-        
+        console.log(userData)
         setUsername(userData["cognito:username"] || userData.name || "User")
         const email = userData.email
 
@@ -78,7 +78,6 @@ export default function HomePage() {
       } catch (error) {
         console.error("Auth error:", error)
         // Nếu lỗi liên quan đến token hoặc không có token -> Logout
-        localStorage.clear()
         router.push("/signin")
       } finally {
         setIsLoading(false)
