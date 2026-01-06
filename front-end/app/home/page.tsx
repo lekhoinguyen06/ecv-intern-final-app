@@ -1,4 +1,4 @@
-export const revalidate = 0;
+//export const revalidate = 0;
 "use client"
 
 import { useState, useEffect } from "react"
@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button"
 import { User, CheckCircle, AlertCircle, Loader2 } from "lucide-react"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"
+
+
 
 // Hàm giải mã JWT token để lấy thông tin (email, username)
 function parseJwt(token: string) {
