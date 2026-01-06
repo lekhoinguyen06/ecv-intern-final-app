@@ -7,6 +7,14 @@ A simple application that allow user to update their profile.
 - [API Guide](#api-guide)
 - [Useful scripts](#useful-scripts)
 
+## Resources
+- [Git repository](https://github.com/lekhoinguyen06/ecv-intern-final-app)
+- [Website URL](http://ecv-intern-alb-169112893.ap-southeast-1.elb.amazonaws.com/)
+- [Postman workspace](https://ecv-intern.postman.co/workspace/ECV-Intern-Workspace~8b178da5-66b5-45d4-85db-cadf33166c79/collection/30708093-d35e6429-6b12-410e-b15f-760d6ae2a227?action=share&source=copy-link&creator=30708093)
+- [Canva slide](https://www.canva.com/design/DAG7sKoOlFs/9s30LbNkf1zUp9ypFD_Jvw/edit?utm_content=DAG7sKoOlFs&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+- [Drive folder](https://drive.google.com/drive/folders/1xRD948qS696USwBDj7_TQwkDaHn7tHun?usp=sharing)
+- [UI designs](https://v0.app/chat/crm-saa-s-frontend-ui-cGyDA8Z190Z?ref=3RCX75)
+
 
 ## Repository structure
 ```text
