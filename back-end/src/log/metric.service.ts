@@ -4,42 +4,23 @@ import { LogService } from './log.service';
 @Injectable()
 export class MetricService implements OnModuleInit {
   private metrics: Record<string, number> = {};
+  private readonly INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
 
   constructor(private readonly logService: LogService) {}
 
   onModuleInit() {
-    this.scheduleDailyLog();
+    this.startScheduler();
   }
 
   track(statusCode: number) {
     const key = statusCode.toString();
-    if (!this.metrics[key]) {
-      this.metrics[key] = 0;
-    }
-    this.metrics[key]++;
+    this.metrics[key] = (this.metrics[key] ?? 0) + 1;
   }
 
-  private scheduleDailyLog() {
-    const now = new Date();
-    const tomorrow = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate() + 1,
-      0,
-      0,
-      0,
-    );
-    const timeUntilMidnight = tomorrow.getTime() - now.getTime();
-
-    setTimeout(() => {
+  private startScheduler() {
+    setInterval(() => {
       this.logAndReset();
-      setInterval(
-        () => {
-          this.logAndReset();
-        },
-        24 * 60 * 60 * 1000,
-      );
-    }, timeUntilMidnight);
+    }, this.INTERVAL_MS);
   }
 
   private logAndReset() {
@@ -50,7 +31,7 @@ export class MetricService implements OnModuleInit {
 
     if (totalRequests > 0) {
       const payload = {
-        period: 'daily',
+        period: '5m',
         timestamp: new Date().toISOString(),
         totalRequests,
         statusCodeBreakdown: { ...this.metrics },
