@@ -1,7 +1,17 @@
 # ECV Intern Final Project Application
+A simple application that allow user to update their profile.
+
+## Table of content
+- [Home](#ecv-intern-final-project-application)
+- [Repository structure](#repository-structure)
+- [API Guide](#api-guide)
+- [Useful scripts](#useful-scripts)
+
 
 ## Repository structure
 ```text
+ecv-intern-final app
+
 ├── back-end
 │   ├── client
 │   ├── src
@@ -30,7 +40,7 @@
 
 ```
 
-## API guides
+## API guide
 
 ### Request body
 Check email availability
@@ -158,34 +168,36 @@ Common response formats are
 
 ## Useful scripts
 
-### To deploy on ec2
+### Deployment 
+To deploy on ec2
 
-New: 
+#### Start
+For deployment on a new instance
 
-First clone the project. Then, go to /backend and run
+First clone the project. Then, go to /backend and run:
 ```bash
 bash ./run.sh
 ```
+This will start an pm2 app by running the updateServer.sh script to that run a similar process to code update.
 
-Update:<br>
+#### Update
+To update code on a running instance
+
 Sever will build both front end and back end before starting the app
+
 ```bash
 pm2 restart ecv-intern-web-server
 ```
 
+#### Local build
 To build locally, go to root:
-
-To build all, commit and push
 ```bash
+# To build all, commit and push
 bash ./build.sh -a 
-```
 
-To build backend, commit and push:
-```bash
-bash ./build.sh -b -c -p -m "feat: new feature" 
-```
+# To build backend, commit and push
+bash ./build.sh -b -c -p -m "feat: new feature"
 
-For more guides on build script, run:
-```bash
+# For more guides on build script
 bash ./build.sh -h
 ```
