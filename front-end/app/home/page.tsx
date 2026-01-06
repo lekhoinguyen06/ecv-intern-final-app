@@ -48,7 +48,7 @@ export default function HomePage() {
         const json = await res.json()
         const data = json.data || json
 
-        // Chỉ tính là có profile nếu các trường quan trọng đều có dữ liệu
+
         const isComplete = 
             data.name && 
             data.age && 
