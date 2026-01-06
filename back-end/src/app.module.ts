@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
@@ -10,6 +10,7 @@ import { SecretManagerService } from './secret/secret.service';
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { CognitoAuthMiddleware } from './auth/cognito-auth';
 
 async function setupDBCredentials(secretManager: SecretManagerService) {
   interface DBSecret {
@@ -18,9 +19,11 @@ async function setupDBCredentials(secretManager: SecretManagerService) {
     port: string;
     password: string;
   }
+
   const dbSecret: DBSecret = await secretManager.load(
     process.env.SECRET_NAME ?? 'ecv-intern',
   );
+
   return {
     type: 'postgres',
     host:
@@ -32,7 +35,7 @@ async function setupDBCredentials(secretManager: SecretManagerService) {
     password: dbSecret.password,
     database: process.env.DB_DATABASE ?? 'postgres',
     entities: [UserEntity],
-    synchronize: true, // Sync with database (turn off for productions - otherwise you can lose production data)
+    synchronize: true,
     ssl: true,
     extra: {
       ssl: {
@@ -50,6 +53,7 @@ async function setupDBCredentials(secretManager: SecretManagerService) {
     }),
     UserModule,
     LogModule,
+    SecretModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -64,4 +68,14 @@ async function setupDBCredentials(secretManager: SecretManagerService) {
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(CognitoAuthMiddleware)
+      .exclude(
+        { path: 'health', method: RequestMethod.ALL },
+        { path: 'api/auth/(.*)', method: RequestMethod.ALL }, // nếu có route login riêng
+      )
+      .forRoutes({ path: 'api/*', method: RequestMethod.ALL });
+  }
+}
