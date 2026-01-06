@@ -36,19 +36,30 @@ export class CognitoAuthMiddleware implements NestMiddleware {
 
       const token = m[1];
 
-      jwt.verify(token, getKey as any, {
-        audience: clientId,
-        issuer,
-      }, (err, decoded) => {
-        if (err) {
-          // token invalid
-          res.status(401).json({ message: 'Invalid token', detail: err.message });
-          return;
-        }
-        // attach decoded token to request for later use
-        (req as any).user = decoded;
-        next();
-      });
+      jwt.verify(
+        token,
+        getKey as any,
+        {
+          issuer,
+        },
+        (err, decoded: any) => {
+          if (err) {
+            res.status(401).json({ message: 'Invalid token', detail: err.message });
+            return;
+          }
+          if (decoded.token_use !== 'access') {
+            res.status(401).json({ message: 'Invalid token_use' });
+            return;
+          }
+          if (decoded.client_id !== clientId) {
+            res.status(401).json({ message: 'Invalid client_id' });
+            return;
+          }
+
+          (req as any).user = decoded;
+          next();
+        },
+      );
     } catch (e: any) {
       res.status(401).json({ message: e?.message || 'Unauthorized' });
     }
