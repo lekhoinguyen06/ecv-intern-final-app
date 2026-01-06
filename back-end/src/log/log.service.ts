@@ -54,8 +54,8 @@ export class LogService {
     });
   }
 
-  metric(obj: object) {
-    this.metricLogger.info(obj);
+  metric(message: string, obj: object) {
+    this.metricLogger.info(message, obj);
   }
 
   silly(silly: string) {

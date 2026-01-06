@@ -56,7 +56,7 @@ export class MetricService implements OnModuleInit {
         statusCodeBreakdown: { ...this.metrics },
       };
 
-      this.logService.metric(payload);
+      this.logService.metric(payload.timestamp, payload);
     }
 
     this.metrics = {};
